@@ -1,0 +1,7 @@
+---
+title: "ISSS608-jpc"
+---
+
+Welcome JP's **Visual Analytics World**!
+
+![](image.webp)
