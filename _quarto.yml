@@ -2,9 +2,21 @@ project:
   type: website
 
 website:
-  title: "ISSS608-jpc"
+  title: "ISSS608 Jia Peng Tiny World"
   navbar:
     left:
+      - text: "Hands-On Exercise"
+        menu:
+        - text: "Hands-On Exercise 0"
+          href: Hands-on_Ex/Hands-on_Ex00/Hands-on_Ex00.html
+      - text: "In-Class Exercise"
+        menu:
+        - text: "In-Class Exercise 1"
+          href: In-class_Ex1.html
+      - text: "Take-Home Exercise"
+        menu:
+        - text: "Take-home Exercise 1"
+          href: Take-home_Ex1.html
       - href: index.qmd
         text: Home
       - about.qmd

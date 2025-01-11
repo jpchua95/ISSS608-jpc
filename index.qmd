@@ -1,5 +1,5 @@
 ---
-title: "ISSS608-jpc"
+title: "ISSS608 Jia Peng Tiny World"
 ---
 
 Welcome JP's **Visual Analytics World**!
