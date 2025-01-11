@@ -5,6 +5,9 @@ website:
   title: "ISSS608 Jia Peng Tiny World"
   navbar:
     left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
       - text: "Hands-On Exercise"
         menu:
         - text: "Hands-On Exercise 0"
@@ -17,9 +20,6 @@ website:
         menu:
         - text: "Take-home Exercise 1"
           href: Take-home_Ex1.html
-      - href: index.qmd
-        text: Home
-      - about.qmd
 
 format:
   html:
