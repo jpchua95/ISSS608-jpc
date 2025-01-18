@@ -1,0 +1,46 @@
+---
+title: "Hands-On Exercise 01: Working with Tidyverse"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+## GETTING STARTED
+
+Loading tidyverse into R environment by using the code chunk below.
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+## Importing data
+
+Code chunk below uses read_csv() of readr to import the Exam_data dataset into R environment.
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+## Compare R Graphics with ggplot
+
+::: {.panel-tabset}
+### R Graphics
+```{r}
+hist(exam_data$MATHS)
+```
+### ggplot2
+```{r}
+ggplot(data=exam_data, aes(x = MATHS)) +
+  geom_histogram(bins=10, 
+                 boundary = 100,
+                 color="black", 
+                 fill="grey") +
+  ggtitle("Distribution of Maths scores")
+```
+:::
+
+
