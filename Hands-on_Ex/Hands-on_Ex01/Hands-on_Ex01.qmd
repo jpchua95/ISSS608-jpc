@@ -27,12 +27,15 @@ exam_data <- read_csv("data/Exam_data.csv")
 
 ## Compare R Graphics with ggplot
 
-::: {.panel-tabset}
+::: panel-tabset
 ### R Graphics
+
 ```{r}
 hist(exam_data$MATHS)
 ```
+
 ### ggplot2
+
 ```{r}
 ggplot(data=exam_data, aes(x = MATHS)) +
   geom_histogram(bins=10, 
@@ -43,4 +46,109 @@ ggplot(data=exam_data, aes(x = MATHS)) +
 ```
 :::
 
+From Prof Kam's notes, ggplot2 is an implementation of Leland Wilkinson’s Grammar of Graphics. Figure below shows the seven grammars of ggplot2.
 
+![](grammar%20of%20graphics.jpg)
+
+A short description of each building block is as follow:
+
+-   **Data**: The dataset being plotted.
+
+-   **Aesthetics**: Take attributes of the data and use them to influence visual characteristics, such as position, colours, size, shape, or transparency.
+
+-   **Geometrics**: The visual elements used for our data, such as point, bar or line.
+
+-   **Facets**: Split the data into subsets to create multiple variations of the same graph (paneling, multiple plots).
+
+-   **Statistics**: Statiscal transformations that summarise data (e.g. mean, confidence intervals).
+
+-   **Coordinate systems**: Define the plane on which data are mapped on the graphic.
+
+-   **Themes**: Modify all non-data components of a plot, such as main title, sub-title, y-aixs title, or legend background.
+
+## Essential Grammatical Elements in ggplot2
+
+When calling ggplot with just the `data` argument, a blank canvas would return as it initialises the ggplot object. This specifies the dataset to be used for the plot.
+
+```{r}
+ggplot(data=exam_data)
+```
+
+By including the `aes` argument, we include the x-axis and the axis' label.
+
+```{r}
+ggplot(data=exam_data, aes(x= MATHS))
+```
+
+Next, we look at adding geometric objects to the graph. We can create layers using a `geom_` function. The full list can be found [here](https://ggplot2.tidyverse.org/reference/#section-layer-geoms).
+
+### Geometric Objects: geom_bar()
+
+The code chunk below plots a bar chart using `geom_bar()`:
+
+```{r}
+ggplot(data=exam_data, aes(x= RACE)) + geom_bar()
+```
+
+### Geometric Objects: geom_dotplot()
+
+The code chunk below plots a dot plot using `geom_dotplot()`:
+
+```{r}
+ggplot(data=exam_data, aes(x= MATHS)) + geom_dotplot(dotsize = 0.5)
+```
+
+The code chunk below turns off the y-axis with `scale_y_continuous` and changes the binwidth to 2.5.
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot(binwidth=2.5,         
+               dotsize = 0.5) +      
+  scale_y_continuous(NULL,           
+                     breaks = NULL)  
+```
+
+### Geometric Objects: geom_histogram()
+
+The code chunk below plots a histogram using `geom_histogram()`:
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_histogram()       
+```
+
+### Modifying a geometric object by changing geom()
+
+Next, we explore the various elements by changing the arguments in `geom`:
+
+-   *bins*: change the number of bins
+
+-   *fill*: shade the histogram
+
+-   *color*: changes the outline color of the bars
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x= MATHS)) +
+  geom_histogram(bins=20,            
+                 color="black",      
+                 fill="light blue")  
+```
+
+### Modifying a geometric object by changing geom()
+
+Next, we explore the various elements by changing the arguments in `aes`:
+
+-   *fill*: changes the interior colour of the histogram
+
+    -   Here, we need to specify the sub-group
+    
+```{r}
+ggplot(data=exam_data, 
+       aes(x= MATHS, 
+           fill = GENDER)) +
+  geom_histogram(bins=20, 
+                 color="grey30")
+```
