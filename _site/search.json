@@ -2,16 +2,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "ISSS608 Jia Peng Tiny World",
+    "title": "Welcome Jia Peng’s Tiny Visual Analytics World!",
     "section": "",
-    "text": "Welcome JP’s Visual Analytics World!"
+    "text": "Credits: ChatGPT"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About Jia Peng",
     "section": "",
-    "text": "I’m JP, hi nice to meet you."
+    "text": "Hello, I’m Jia Peng or you can call me JP. Nice to meet you!\n\n\n\n\n\nThis is me!\n\n\n\n\nI’m a Professional Services Consultant at an AI chatbot company, where I help customers implement chatbots and onboard their teams effectively.\nI have a strong interest in data analytics and AI project management. Currently, I’m in my final semester of the SMU MITB program.\nFeel free to connect with me on LinkedIn!"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex00/Hands-on_Ex00.html",
@@ -142,7 +142,7 @@
   {
     "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
     "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
-    "title": "In-Class_Ex01: Superstore Sales and Profit Report",
+    "title": "In-Class Exercise 01: Superstore Sales and Profit Report",
     "section": "",
     "text": "For In-Class Exercise 1, we built a dashboard presenting the sales and profit report of Superstore.\nClick here to access the dashboard on Tableau."
   }

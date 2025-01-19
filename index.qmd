@@ -1,7 +1,5 @@
 ---
-title: "ISSS608 Jia Peng Tiny World"
+title: "Welcome Jia Peng's Tiny Visual Analytics World!"
 ---
 
-Welcome JP's **Visual Analytics World**!
-
-![](image.webp)
+![Credits: ChatGPT](DALL·E 2025-01-19 22.15.05 - An animated, futuristic visualization of data analytics, featuring glowing charts, graphs, and interconnected nodes representing data flow. The design.webp){fig-align="center"}

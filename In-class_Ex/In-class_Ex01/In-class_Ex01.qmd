@@ -1,5 +1,5 @@
 ---
-title: "In-Class_Ex01: Superstore Sales and Profit Report"
+title: "In-Class Exercise 01: Superstore Sales and Profit Report"
 ---
 
 For In-Class Exercise 1, we built a dashboard presenting the sales and profit report of Superstore. 

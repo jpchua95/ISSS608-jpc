@@ -1,7 +1,21 @@
 ---
-title: "About"
+title: "About Jia Peng"
 ---
 
-I'm JP, hi nice to meet you.
+::: {style="text-align: center"}
+**Hello, I'm Jia Peng or you can call me JP. Nice to meet you!**
+:::
 
-![](Corporate%20headshot%202022.jpg)
+::::: grid
+::: g-col-6
+![](Corporate%20headshot%202022.jpg){width="217"}
+:::
+
+::: g-col-6
+I’m a Professional Services Consultant at an AI chatbot company, where I help customers implement chatbots and onboard their teams effectively.
+
+I have a strong interest in data analytics and AI project management. Currently, I’m in my final semester of the SMU MITB program.
+
+Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/chuajp/)!
+:::
+:::::
