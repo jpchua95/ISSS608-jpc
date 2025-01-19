@@ -138,5 +138,12 @@
     "title": "Hands-On Exercise 01: A Layered Grammar of Graphics - ggplot2 methods",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes 1 A Layered Grammar of Graphics: ggplot2 methods\nggplot2 documentation\nSome paraphrasing from ChatGPT\n\n↩︎"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
+    "href": "In-class_Ex/In-class_Ex01/In-class_Ex01.html",
+    "title": "In-Class_Ex01: Superstore Sales and Profit Report",
+    "section": "",
+    "text": "For In-Class Exercise 1, we built a dashboard presenting the sales and profit report of Superstore.\nClick here to access the dashboard on Tableau."
   }
 ]

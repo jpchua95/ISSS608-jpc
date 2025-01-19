@@ -1,0 +1,9 @@
+---
+title: "In-Class_Ex01: Superstore Sales and Profit Report"
+---
+
+For In-Class Exercise 1, we built a dashboard presenting the sales and profit report of Superstore. 
+
+[Click here](https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex01_17371865820910/Dashboard1) to access the dashboard on Tableau.
+
+---
