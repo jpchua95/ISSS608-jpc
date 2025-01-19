@@ -509,9 +509,9 @@ ggplot(data=exam_data,
 
 ### 11.1 Geometric Objects: geom_jitter
 
-In [6.10 Combining geom Objects](https://jpchua-isss608.netlify.app/hands-on_ex/hands-on_ex01/hands-on_ex01#combining-geom-objects), The jitter geom adds a small amount of random variation to the location of each point. Altertively, `geom_jitter()` can also be used.
+In [6.10 Combining geom Objects](https://jpchua-isss608.netlify.app/hands-on_ex/hands-on_ex01/hands-on_ex01#combining-geom-objects), the jitter geom adds a small amount of random variation to the location of each point. Alternatively, `geom_jitter()` can also be used.
 
-It is useful in preventing overplotting, which occurs when many points overlap and prevent use from observing the true distribution of the data, especially in smaller datasets.
+It is useful in preventing overplotting, which occurs when many points overlap and preventing us from observing the true distribution of the data, especially in smaller datasets.
 
 ::: callout-note
 Click [here](https://ggplot2.tidyverse.org/reference/geom_jitter.html) to read more about `jitter points`.
@@ -529,7 +529,7 @@ ggplot(data=exam_data,
 
 ### 11.2 Working with facets with modified aes()
 
-The code chunk below added the breakdown by GENDER by colour in each panel. This provides a clear representation of the performance by GENDER in each CLASS.
+The code chunk below added the breakdown by GENDER in each panel. This provides a clear representation of the results by GENDER in each CLASS.
 
 ```{r}
 ggplot(data=exam_data, 
