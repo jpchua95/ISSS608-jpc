@@ -72,7 +72,7 @@ realis2019_filtered <- realis2019_selected %>%
     filter(`Unit Price ($ psm)` <= 13000)
 ```
 
-### Putting all together 
+### Putting all together
 
 ```{r}
 realis2019_end <- realis2019 %>%
