@@ -2,4 +2,4 @@
 title: "Welcome Jia Peng's Tiny Visual Analytics World!"
 ---
 
-![Credits: ChatGPT](DALL·E 2025-01-19 22.15.05 - An animated, futuristic visualization of data analytics, featuring glowing charts, graphs, and interconnected nodes representing data flow. The design.webp){fig-align="center"}
+![Credits: ChatGPT](DALL·E%202025-01-19%2022.15.05%20-%20An%20animated,%20futuristic%20visualization%20of%20data%20analytics,%20featuring%20glowing%20charts,%20graphs,%20and%20interconnected%20nodes%20representing%20data%20flow.%20The%20design.webp){fig-align="center"}
