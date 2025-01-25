@@ -194,5 +194,12 @@
     "title": "Hands-On Exercise 02: Beyond ggplot2 Fundamentals",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes [2 Beyond ggplot2 Fundamentals](https://r4va.netlify.app/chap02)\n\n↩︎"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "title": "In-Class Exercise 02: Superstore Sales and Profit Report",
+    "section": "",
+    "text": "For In-Class Exercise 2, we enhanced the dashboard from In-Class Exercise 1 presenting the monthly profit and sales vs profit reports of Superstore.\nClick here to access the dashboard on Tableau."
   }
 ]
