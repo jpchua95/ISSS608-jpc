@@ -1,5 +1,10 @@
 ---
 title: "About Jia Peng"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
 ---
 
 ::: {style="text-align: center"}
