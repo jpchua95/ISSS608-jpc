@@ -20,10 +20,8 @@ website:
       - text: "In-Class Exercise"
         menu:
         - text: "In-Class Exercise 1"
-          href: In-class_Ex/In-class_Ex01/In-class_Ex01.html
+          href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex01_17371865820910/Dashboard1
         - text: "In-Class Exercise 2"
-          href: In-class_Ex/In-class_Ex02/In-class_Ex02.html
-        - text: "In-Class Exercise 2 (Tableau)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex02_17377903625070/Dashboard1
       - text: "Take-Home Exercise"
         menu:
