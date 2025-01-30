@@ -557,8 +557,8 @@ ggplot(data=exam_data,
 
 [^1]: This document was completed with reference to:
 
-    -   Prof Kam's notes [1 A Layered Grammar of Graphics: ggplot2 methods](https://r4va.netlify.app/chap01)
+    -   Prof Kam's notes "1 A Layered Grammar of Graphics: ggplot2 methods": https://r4va.netlify.app/chap01
 
-    -   [ggplot2 documentation](https://ggplot2.tidyverse.org/reference/index.html)
+    -   ggplot2 documentation: https://ggplot2.tidyverse.org/reference/index.html
 
     -   Some paraphrasing from ChatGPT

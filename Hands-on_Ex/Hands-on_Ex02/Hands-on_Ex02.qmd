@@ -529,4 +529,5 @@ patchwork & theme_economist()
 
 [^1]: This document was completed with reference to:
 
-    -   Prof Kam's notes \[2 Beyond ggplot2 Fundamentals\](<https://r4va.netlify.app/chap02>)
+    -   Prof Kam's notes "2 Beyond ggplot2 Fundamentals": <https://r4va.netlify.app/chap02>
+    -   Some paraphrasing from ChatGPT
