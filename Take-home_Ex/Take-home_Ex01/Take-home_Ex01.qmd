@@ -1,0 +1,11 @@
+---
+title: "Take-Home Exercise 01"
+author: "Jia Peng Chua"
+date: "February 1, 2025"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---

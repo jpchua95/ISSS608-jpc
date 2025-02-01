@@ -25,10 +25,16 @@ website:
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex01_17371865820910/Dashboard1
         - text: "In-Class Exercise 2"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex02_17377903625070/Dashboard1
+        - text: "In-Class Exercise 3 (Interactive Dashboard)"
+          href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-1_17383926050260/DashboardbyYearState
+        - text: "In-Class Exercise 3 (Animation)"
+          href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-2_17383925206230/SalesvsProfitbyMonthandYear
+        - text: "In-Class Exercise 3 (Story)"
+          href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-3_17383934113260/Story
       - text: "Take-Home Exercise"
         menu:
         - text: "Take-home Exercise 1"
-          href: Take-home_Ex1.html
+          href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
 
 format:
   html:
