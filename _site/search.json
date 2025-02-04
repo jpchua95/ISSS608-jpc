@@ -320,5 +320,131 @@
     "title": "Hands-On Exercise 03a: Programming Interactive Data Visualisation",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “3 Programming Interactive Data Visualisation with R”: https://r4va.netlify.app/chap03\n\n↩︎"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "",
+    "text": "We will learn about creating animated data visualisation:\n\nwith gganimate and plotly R packages\nreshape data using tidyr package\nprocess, wrangle and transform data with dplyr package\n\nThese key concepts are important:\n\nFrame: In an animated line graph, each frame represents a different point in time or a different category. When the frame changes, the data points on the graph are updated to reflect the new data.\nAnimation Attributes: These are settings that control how the animation behaves. For example, you can specify the duration of each frame, the easing function used to transition between frames, and whether to start the animation from the current frame or from the beginning.\n\n\n\n\n\n\n\nNote\n\n\n\nIf you are conducting an exploratory data analysis, a animated graphic may not be worth the time investment.\nHowever, if you are giving a presentation, a few well-placed animated graphics can help an audience connect with your topic remarkably better than static counterparts.\n\n\nThe following R packages will be required:\n\nplotly, R library for plotting interactive statistical graphs.\ngganimate, an ggplot extension for creating animated statistical graphs.\ngifski converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame.\ngapminder: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.\ntidyverse, a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs.\n\nTo get started, we load the necessary packages into R environment using the code chunk below.\n\npacman::p_load(readxl, gifski, gapminder,\n               plotly, gganimate, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#getting-started-with-animation",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#getting-started-with-animation",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "",
+    "text": "We will learn about creating animated data visualisation:\n\nwith gganimate and plotly R packages\nreshape data using tidyr package\nprocess, wrangle and transform data with dplyr package\n\nThese key concepts are important:\n\nFrame: In an animated line graph, each frame represents a different point in time or a different category. When the frame changes, the data points on the graph are updated to reflect the new data.\nAnimation Attributes: These are settings that control how the animation behaves. For example, you can specify the duration of each frame, the easing function used to transition between frames, and whether to start the animation from the current frame or from the beginning.\n\n\n\n\n\n\n\nNote\n\n\n\nIf you are conducting an exploratory data analysis, a animated graphic may not be worth the time investment.\nHowever, if you are giving a presentation, a few well-placed animated graphics can help an audience connect with your topic remarkably better than static counterparts.\n\n\nThe following R packages will be required:\n\nplotly, R library for plotting interactive statistical graphs.\ngganimate, an ggplot extension for creating animated statistical graphs.\ngifski converts video frames to GIF animations using pngquant’s fancy features for efficient cross-frame palettes and temporal dithering. It produces animated GIFs that use thousands of colors per frame.\ngapminder: An excerpt of the data available at Gapminder.org. We just want to use its country_colors scheme.\ntidyverse, a family of modern R packages specially designed to support data science, analysis and communication task including creating static statistical graphs.\n\nTo get started, we load the necessary packages into R environment using the code chunk below.\n\npacman::p_load(readxl, gifski, gapminder,\n               plotly, gganimate, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#importing-data",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#importing-data",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "2. Importing Data",
+    "text": "2. Importing Data\nThe code chunk below uses read_csv() of readr to import the Exam_data dataset into R environment.\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate_each_(funs(factor(.)), col) %&gt;%\n  mutate(Year = as.integer(Year))\n\n\n\n\n\n\n\nNote\n\n\n\n\nread_xls() of readxl package is used to import the Excel worksheet.\nmutate_each_() of dplyr package is used to convert all character data type into factor.\n\nmutate_each_() was deprecated in dplyr 0.7.0\nfuns() was deprecated in dplyr 0.8.0\nRewrite the code with mutate_at()\n\nmutate of dplyr package is used to convert data values of Year field into integer.\n\n\n\nRe-writing the codes with mutate_at():\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate_at(col, as.factor) %&gt;%\n  mutate(Year = as.integer(Year))\n\nacross() can also be used to derive the same outputs:\n\ncol &lt;- c(\"Country\", \"Continent\")\nglobalPop &lt;- read_xls(\"data/GlobalPopulation.xls\",\n                      sheet=\"Data\") %&gt;%\n  mutate(across(col, as.factor)) %&gt;%\n  mutate(Year = as.integer(Year))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#animated-data-visualisation-gganimate-methods",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#animated-data-visualisation-gganimate-methods",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "3. Animated Data Visualisation: gganimate methods",
+    "text": "3. Animated Data Visualisation: gganimate methods\ngganimate extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.\n\ntransition_*() defines how the data should be spread out and how it relates to itself across time.\nview_*() defines how the positional scales should change along the animation.\nshadow_*() defines how data from other points in time should be presented in the given point in time.\nenter_*()/exit_*() defines how new data should appear and how old data should disappear during the course of the animation.\nease_aes() defines how different aesthetics should be eased during transitions.\n\n\n3.1 Building a static population bubble plot\nIn the code chunk below, the basic ggplot2 functions are used to create a static bubble plot.\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') \n\n\n\n\n\n\n\n\n\n\n3.2 Building the animated bubble plot\nIn the code chunk below,\n\ntransition_time() of gganimate is used to create transition through distinct states in time (i.e. Year).\nease_aes() is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.\n\n\nggplot(globalPop, aes(x = Old, y = Young, \n                      size = Population, \n                      colour = Country)) +\n  geom_point(alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(title = 'Year: {frame_time}', \n       x = '% Aged', \n       y = '% Young') +\n  transition_time(Year) +       \n  ease_aes('linear')"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#animated-data-visualisation-plotly",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#animated-data-visualisation-plotly",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "4. Animated Data Visualisation: plotly",
+    "text": "4. Animated Data Visualisation: plotly\nIn Plotly R package, both ggplotly() and plot_ly() support key frame animations through the frame argument/aesthetic. They also support an ids argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).\n\n4.1 Building an animated bubble plot: ggplotly() method\nHere, we create an animated bubble plot using ggplotly() method, with the following code chunk.\n\nThe plotThe code\n\n\n\n\n\n\n\n\nThe animated bubble plot above includes a play/pause button and a slider component for controlling the animation.\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7, \n             show.legend = FALSE) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young')\n\nggplotly(gg)\n\n\n\n\n\n\n\nNote\n\n\n\n\nAppropriate ggplot2 functions are used to create a static bubble plot. The output is then saved as an R object called gg.\nggplotly() is then used to convert the R graphic object into an animated svg object.\n\n\n\n\n\n\nEven when the show.legend = FALSE argument was used, the legend still appears on the plot. To overcome this problem, theme(legend.position='none') should be used as shown in the plot and code chunk below.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\ngg &lt;- ggplot(globalPop, \n       aes(x = Old, \n           y = Young, \n           size = Population, \n           colour = Country)) +\n  geom_point(aes(size = Population,\n                 frame = Year),\n             alpha = 0.7) +\n  scale_colour_manual(values = country_colors) +\n  scale_size(range = c(2, 12)) +\n  labs(x = '% Aged', \n       y = '% Young') + \n  theme(legend.position='none')\n\nggplotly(gg)\n\n\n\n\n\n\n4.2 Building an animated bubble plot: plot_ly() method\nHere, we create an animated bubble plot using plot_ly() method.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\nbp &lt;- globalPop %&gt;%\n  plot_ly(x = ~Old, \n          y = ~Young, \n          size = ~Population, \n          color = ~Continent,\n          sizes = c(2, 100),\n          frame = ~Year, \n          text = ~Country, \n          hoverinfo = \"text\",\n          type = 'scatter',\n          mode = 'markers'\n          ) %&gt;%\n  layout(showlegend = FALSE)\nbp\n\n\n\n\n1"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html#footnotes",
+    "title": "Hands-On Exercise 03b: Programming Animated Statistical Graphics with R",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “4 Programming Animated Statistical Graphics with R”: https://r4va.netlify.app/chap04\n\n↩︎"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "",
+    "text": "The following R packages will be used:\n\nggridges: a ggplot2 extension specially designed for plotting ridgeline plots\nggdist: a ggplot2 extension spacially desgin for visualising distribution and uncertainty\ntidyverse: a family of R packages to meet the modern data science and visual communication needs\nggthemes: a ggplot extension that provides the user additional themes, scales, and geoms for the ggplots package\ncolorspace: an R package provides a broad toolbox for selecting individual colors or color palettes, manipulating these colors, and employing them in various kinds of visualisations\n\n\npacman::p_load(ggdist, ggridges, ggthemes, colorspace, tidyverse)\n\n\n\n\nThe code chunk below imports the Exam_data.csv file into R.\n\nexam &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#installing-and-loading-the-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#installing-and-loading-the-packages",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "",
+    "text": "The following R packages will be used:\n\nggridges: a ggplot2 extension specially designed for plotting ridgeline plots\nggdist: a ggplot2 extension spacially desgin for visualising distribution and uncertainty\ntidyverse: a family of R packages to meet the modern data science and visual communication needs\nggthemes: a ggplot extension that provides the user additional themes, scales, and geoms for the ggplots package\ncolorspace: an R package provides a broad toolbox for selecting individual colors or color palettes, manipulating these colors, and employing them in various kinds of visualisations\n\n\npacman::p_load(ggdist, ggridges, ggthemes, colorspace, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#data-import",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#data-import",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "",
+    "text": "The code chunk below imports the Exam_data.csv file into R.\n\nexam &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#plotting-ridgeline-graph-ggridges-method",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#plotting-ridgeline-graph-ggridges-method",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "2.1 Plotting ridgeline graph: ggridges method",
+    "text": "2.1 Plotting ridgeline graph: ggridges method\nggridges package provides two main geom to plot gridgeline plots, they are:\n\ngeom_ridgeline(): takes height values directly to draw the ridgelines\ngeom_density_ridges(): first estimates data densities and then draws those using ridgelines\n\nThe code chunk below plots using geom_density_ridges().\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS)) +\n  geom_density_ridges(\n    scale = 3,\n    rel_min_height = 0.01,\n    bandwidth = 3.4,\n    fill = lighten(\"#7097BB\", .3),\n    color = \"white\"\n  ) +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n    ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#varying-fill-colors-along-the-x-axis",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#varying-fill-colors-along-the-x-axis",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "2.2 Varying fill colors along the x axis",
+    "text": "2.2 Varying fill colors along the x axis\nThis can be achieved by using either\n\ngeom_ridgeline_gradient()\ngeom_density_ridges_gradient()\n\nBoth geoms work just like geom_ridgeline() and geom_density_ridges(), except that they allow for varying fill colors.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = ENGLISH, \n           y = CLASS,\n           fill = stat(x))) +\n  geom_density_ridges_gradient(\n    scale = 3,\n    rel_min_height = 0.01) +\n  scale_fill_viridis_c(name = \"Temp. [F]\",\n                       option = \"C\") +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n  ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#mapping-the-probabilities-directly-onto-colour",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#mapping-the-probabilities-directly-onto-colour",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "2.3 Mapping the probabilities directly onto colour",
+    "text": "2.3 Mapping the probabilities directly onto colour\nggridges package also provides a stat function called stat_density_ridges()that replaces stat_density() of ggplot2.\nThe code chunk below maps the probabilities calculated using stat(ecdf), which represents the empirical cumulative density function for the distribution.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = 0.5 - abs(0.5-stat(ecdf)))) +\n  stat_density_ridges(geom = \"density_ridges_gradient\", \n                      calc_ecdf = TRUE) +\n  scale_fill_viridis_c(name = \"Tail probability\",\n                       direction = -1) +\n  theme_ridges()\n\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nIt is important include the argument calc_ecdf = TRUE in stat_density_ridges()."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#ridgeline-plots-with-quantile-lines",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#ridgeline-plots-with-quantile-lines",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "2.4 Ridgeline plots with quantile lines",
+    "text": "2.4 Ridgeline plots with quantile lines\nBy using geom_density_ridges_gradient(), we can colour the ridgeline plot by quantile, using the calculated stat(quantile) aesthetic.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = 4,\n    quantile_lines = TRUE) +\n  scale_fill_viridis_d(name = \"Quartiles\") +\n  theme_ridges()\n\n\n\n\nInstead of using number to define the quantiles, we can also specify quantiles by cut points such as 2.5% and 97.5% tails to colour the ridgeline plot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam,\n       aes(x = ENGLISH, \n           y = CLASS, \n           fill = factor(stat(quantile))\n           )) +\n  stat_density_ridges(\n    geom = \"density_ridges_gradient\",\n    calc_ecdf = TRUE, \n    quantiles = c(0.025, 0.975)\n    ) +\n  scale_fill_manual(\n    name = \"Probability\",\n    values = c(\"#FF0000A0\", \"#A0A0A0A0\", \"#0000FFA0\"),\n    labels = c(\"(0, 0.025]\", \"(0.025, 0.975]\", \"(0.975, 1]\")\n  ) +\n  theme_ridges()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#plotting-a-half-eye-graph",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#plotting-a-half-eye-graph",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "3.1 Plotting a Half Eye Graph",
+    "text": "3.1 Plotting a Half Eye Graph\nwe will plot a Half-Eye graph by using stat_halfeye() of ggdist package.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA)\n\n\n\n\n\n\n\nNote\n\n\n\nThe slab interval is removed by setting .width = 0 and point_colour = NA."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#adding-the-boxplot-with-geom_boxplot",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#adding-the-boxplot-with-geom_boxplot",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "3.2 Adding the boxplot with geom_boxplot()",
+    "text": "3.2 Adding the boxplot with geom_boxplot()\nAdding the second geometry layer using geom_boxplot() produces a narrow boxplot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#adding-dot-plots-with-stat_dots",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#adding-dot-plots-with-stat_dots",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "3.3 Adding Dot Plots with stat_dots()",
+    "text": "3.3 Adding Dot Plots with stat_dots()\nAdding the third geometry layer using stat_dots() of the ggdist package. This produces a half-dotplot, which is similar to a histogram which indicates the number of samples. Selecting side = \"left\" indicates the dotplot to be on the left side.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 2)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#finishing-touch",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#finishing-touch",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "3.4 Finishing touch",
+    "text": "3.4 Finishing touch\nThe coord_flip() of ggplot2 package will be used to flip the raincloud chart horizontally to give it the raincloud appearance.\nThe theme_economist() of ggthemes package is used to give the raincloud chart a professional publishing standard look.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 1.5) +\n  coord_flip() +\n  theme_economist()\n\n\n\n\n1"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html#footnotes",
+    "title": "Hands-On Exercise 04a: Visualising Distribution",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “9 Visualising Distribution”: https://r4va.netlify.app/chap09\n\n↩︎"
   }
 ]
