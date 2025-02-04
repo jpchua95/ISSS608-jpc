@@ -12,7 +12,6 @@ execute:
 
 
 
-
 ## 1. Getting Started with Animation
 
 We will learn about creating animated data visualisation:
@@ -51,12 +50,10 @@ To get started, we load the necessary packages into R environment using the code
 
 
 
-
 ```{r}
 pacman::p_load(readxl, gifski, gapminder,
                plotly, gganimate, tidyverse)
 ```
-
 
 
 
@@ -68,7 +65,6 @@ The code chunk below uses `read_csv()` of `readr` to import the Exam_data datase
 
 
 
-
 ```{r}
 col <- c("Country", "Continent")
 globalPop <- read_xls("data/GlobalPopulation.xls",
@@ -76,7 +72,6 @@ globalPop <- read_xls("data/GlobalPopulation.xls",
   mutate_each_(funs(factor(.)), col) %>%
   mutate(Year = as.integer(Year))
 ```
-
 
 
 
@@ -100,7 +95,6 @@ Re-writing the codes with `mutate_at()`:
 
 
 
-
 ```{r}
 col <- c("Country", "Continent")
 globalPop <- read_xls("data/GlobalPopulation.xls",
@@ -112,9 +106,7 @@ globalPop <- read_xls("data/GlobalPopulation.xls",
 
 
 
-
 `across()` can also be used to derive the same outputs:
-
 
 
 
@@ -126,7 +118,6 @@ globalPop <- read_xls("data/GlobalPopulation.xls",
   mutate(across(col, as.factor)) %>%
   mutate(Year = as.integer(Year))
 ```
-
 
 
 
@@ -152,7 +143,6 @@ In the code chunk below, the basic ggplot2 functions are used to create a static
 
 
 
-
 ```{r}
 ggplot(globalPop, aes(x = Old, y = Young, 
                       size = Population, 
@@ -169,7 +159,6 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 
 
-
 ### 3.2 Building the animated bubble plot
 
 In the code chunk below,
@@ -177,7 +166,6 @@ In the code chunk below,
 -   [`transition_time()`](https://gganimate.com/reference/transition_time.html) of **gganimate** is used to create transition through distinct states in time (i.e. Year).
 
 -   `ease_aes()` is used to control easing of aesthetics. The default is `linear`. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
-
 
 
 
@@ -200,7 +188,6 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 
 
-
 ## 4. Animated Data Visualisation: *plotly*
 
 In **Plotly R** package, both `ggplotly()` and `plot_ly()` support key frame animations through the `frame` argument/aesthetic. They also support an `ids` argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
@@ -211,7 +198,6 @@ Here, we create an animated bubble plot using `ggplotly()` method, with the foll
 
 :::: panel-tabset
 #### The plot
-
 
 
 
@@ -238,11 +224,9 @@ ggplotly(gg)
 
 
 
-
 The animated bubble plot above includes a play/pause button and a slider component for controlling the animation.
 
 #### The code
-
 
 
 
@@ -265,7 +249,6 @@ gg <- ggplot(globalPop,
 
 ggplotly(gg)
 ```
-
 
 
 
@@ -285,7 +268,6 @@ Even when the `show.legend = FALSE` argument was used, the legend still appears 
 
 
 
-
 ```{r}
 #| echo: FALSE
 gg <- ggplot(globalPop, 
@@ -308,9 +290,7 @@ ggplotly(gg)
 
 
 
-
 ## The code
-
 
 
 
@@ -333,7 +313,6 @@ gg <- ggplot(globalPop,
 
 ggplotly(gg)
 ```
-
 
 
 
@@ -349,7 +328,6 @@ Here, we create an animated bubble plot using `plot_ly()` method.
 
 
 
-
 ```{r}
 #| echo: FALSE
 bp <- globalPop %>%
@@ -371,9 +349,7 @@ bp
 
 
 
-
 ## The code
-
 
 
 
@@ -395,7 +371,6 @@ bp <- globalPop %>%
   layout(showlegend = FALSE)
 bp
 ```
-
 
 
 

@@ -212,7 +212,7 @@ ggplotly(gg)
 Even when the `show.legend = FALSE` argument was used, the legend still appears on the plot. To overcome this problem, `theme(legend.position='none')` should be used as shown in the plot and code chunk below.
 
 ::: panel-tabset
-## The plot
+#### The plot
 
 ```{r}
 #| echo: FALSE
@@ -233,7 +233,7 @@ gg <- ggplot(globalPop,
 ggplotly(gg)
 ```
 
-## The code
+#### The code
 
 ```{r}
 #| eval: FALSE
@@ -260,7 +260,7 @@ ggplotly(gg)
 Here, we create an animated bubble plot using `plot_ly()` method.
 
 ::: panel-tabset
-## The plot
+#### The plot
 
 ```{r}
 #| echo: FALSE
@@ -280,7 +280,7 @@ bp <- globalPop %>%
 bp
 ```
 
-## The code
+#### The code
 
 ```{r}
 #| eval: FALSE
