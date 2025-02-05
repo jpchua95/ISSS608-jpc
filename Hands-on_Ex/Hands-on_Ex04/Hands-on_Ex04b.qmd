@@ -1,0 +1,264 @@
+---
+title: "Hands-On Exercise 04b: Visual Statistical Analysis"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+Over here, [`ggstatsplot`](https://indrajeetpatil.github.io/ggstatsplot/index.html) (an extension of ggplot2) and `tidyverse` packages will be used.
+
+```{r}
+pacman::p_load(ggstatsplot, tidyverse)
+```
+
+The code chunk below imports the *Exam_data.csv* file into R.
+
+```{r}
+exam <- read_csv("data/Exam_data.csv")
+```
+
+# 2. Building Visuals
+
+## 2.1 One-sample test: *gghistostates()* method
+
+In the code chunk below, [`gghistostats()`](https://indrajeetpatil.github.io/ggstatsplot/reference/gghistostats.html)is used to to build an visual of one-sample test on English scores.
+
+```{r}
+set.seed(1234)
+
+gghistostats(
+  data = exam,
+  x = ENGLISH,
+  type = "bayes",
+  test.value = 60,
+  xlab = "English scores"
+)
+```
+
+## 2.2 Unpacking the Bayes Factor
+
+-   A Bayes factor is the ratio of the likelihood of one particular hypothesis to the likelihood of another. It can be interpreted as a measure of the strength of evidence in favor of one theory among two competing theories.
+
+-   That’s because the Bayes factor gives us a way to evaluate the data in favor of a null hypothesis, and to use external information to do so. It tells us what the weight of the evidence is in favor of a given hypothesis.
+
+-   When we are comparing two hypotheses, H1 (the alternate hypothesis) and H0 (the null hypothesis), the Bayes Factor is often written as B10.
+
+-   The [Schwarz criterion](https://www.statisticshowto.com/bayesian-information-criterion/) is one of the easiest ways to calculate rough approximation of the Bayes Factor.
+
+-   A Bayes Factor can be any positive number. 
+
+-   One of the most common interpretations is as follow:
+
+![](image6.jpg)
+
+## 2.3 Two-sample mean test: *ggbetweenstats()*
+
+In the code chunk below, [`ggbetweenstats()`](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbetweenstats.html)is used to build a visual for two-sample mean test of Maths scores by gender.
+
+Default information includes:
+
+-   Statistical details
+
+-   Bayes Factor
+
+-   Sample sizes
+
+-   Distribution summary
+
+```{r}
+ggbetweenstats(
+  data = exam,
+  x = GENDER, 
+  y = MATHS,
+  type = "np",
+  messages = FALSE
+)
+```
+
+## 2.4 Oneway ANOVA Test: *ggbetweenstats()* method
+
+In the code chunk below, [`ggbetweenstats()`](#0)is used to build a visual for One-way ANOVA test on English score by race.
+
+```{r}
+ggbetweenstats(
+  data = exam,
+  x = RACE, 
+  y = ENGLISH,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "s",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+
+For the argument `pairwise.display`, here are the values we can use:
+
+-   “ns”: only non-significant
+
+-   “s”: only significant
+
+-   “all”: everything
+
+Here is an example showing all (significant and non-significant) pairwise display.
+
+```{r}
+ggbetweenstats(
+  data = exam,
+  x = RACE, 
+  y = ENGLISH,
+  type = "p",
+  mean.ci = TRUE, 
+  pairwise.comparisons = TRUE, 
+  pairwise.display = "all",
+  p.adjust.method = "fdr",
+  messages = FALSE
+)
+```
+
+## 2.5 Significant Test of Correlation: *ggscatterstats()*
+
+In the code chunk below, [`ggscatterstats()`](https://indrajeetpatil.github.io/ggstatsplot/reference/ggscatterstats.html)is used to build a visual for Significant Test of Correlation between Maths scores and English scores.
+
+```{r}
+ggscatterstats(
+  data = exam,
+  x = MATHS,
+  y = ENGLISH,
+  marginal = FALSE,
+  )
+```
+
+## 2.6 Significant Test of Association (Depedence): *ggbarstats()* methods
+
+In the code chunk below, the Maths scores is binned into a 4-class variable using [`cut()`](#0)*.* `ggbarstats()` is then used to build a visual for Significant Test of Association.
+
+```{r}
+exam1 <- exam %>% 
+  mutate(MATHS_bins = 
+           cut(MATHS, 
+               breaks = c(0,20,40,60,80,100))
+)
+
+ggbarstats(exam1, 
+           x = MATHS_bins, 
+           y = GENDER)
+```
+
+By using bins of 0, 20, 40, 60, 80, 100, the results in some bins are too small and insignificant.
+
+Re-binning to 0, 60, 75, 85, 100 provides a clearer categorisation.
+
+```{r}
+exam1 <- exam %>% 
+  mutate(MATHS_bins = 
+           cut(MATHS, 
+               breaks = c(0,60,75,85,100))
+)
+
+ggbarstats(exam1, 
+           x = MATHS_bins, 
+           y = GENDER)
+```
+
+# 3. Visualising Models
+
+In this section, the `readxl`, `performance`, `parameters` and `see` packages will be used.
+
+```{r}
+pacman::p_load(readxl, performance, parameters, see)
+```
+
+In the code chunk below, [`read_xls()`](https://readxl.tidyverse.org/reference/read_excel.html) of [*readxl*](#0)package is used to import the data worksheet of *ToyotaCorolla.xls* workbook into R.
+
+```{r}
+car_resale <- read_xls("data/ToyotaCorolla.xls", 
+                       "data")
+car_resale
+```
+
+## 3.1 Multiple Regression Model using *lm()*
+
+The code chunk below is used to calibrate a multiple linear regression model by using `lm()`of Base Stats of R.
+
+```{r}
+model <- lm(Price ~ Age_08_04 + Mfg_Year + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+model
+```
+
+## 3.2 Model Diagnostic: Checking for mullticolinearity
+
+[`check_collinearity()`](https://easystats.github.io/performance/reference/check_collinearity.html)of [*performance*](https://easystats.github.io/performance/index.html)package is used to check for the model's multicollinearity.
+
+```{r}
+check_collinearity(model)
+```
+
+Plotting out the collinearity results. Variance inflation factor (VIF) is a statistical measurement that quantifies multicollinearity in a regression model. A low VIF indicates low or no correlation between the variables. A high VIF (\>10) indicates a strong multicollinearity.
+
+```{r}
+check_c <- check_collinearity(model)
+plot(check_c)
+```
+
+## 3.3 Model Diagnostic: Checking normality assumption
+
+[`check_normality()`](https://easystats.github.io/performance/reference/check_normality.html)of *performance* package is used to check normality assumptions of the model.
+
+```{r}
+model_norm <- lm(Price ~ Age_08_04 + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+```
+
+```{r}
+check_norm <- check_normality(model_norm)
+plot(check_norm)
+```
+
+## 3.4 Model Diagnostic: Checking for homogeneity of variances
+
+[`check_heteroscedasticity()`](https://easystats.github.io/performance/reference/check_heteroscedasticity.html)of *performance* package is used to checking the homogeneity of variances of models.
+
+```{r}
+check_h <- check_heteroscedasticity(model_norm)
+plot(check_h)
+```
+
+## 3.5 Model Diagnostic: Complete check
+
+Perform the complete check by using [`check_model()`](https://easystats.github.io/performance/reference/check_model.html).
+
+```{r}
+check_model(model_norm)
+```
+
+## 3.6 Visualising Regression Parameters: *see* methods
+
+`plot()` of *see* package and `parameters()` of *parameters* package are used to visualise the parameters of a regression model.
+
+```{r}
+plot(parameters(model_norm))
+```
+
+## 3.7 Visualising Regression Parameters: *ggcoefstats()* methods
+
+[`ggcoefstats()`](https://indrajeetpatil.github.io/ggstatsplot/reference/ggcoefstats.html) of *ggstatsplot* package is used to visualise the parameters of a regression model.
+
+```{r}
+ggcoefstats(model_norm, 
+            output = "plot")
+```
+
+[^1]
+
+[^1]: This document was completed with reference to:
+
+    -   Prof Kam's notes "10 Visual Statistical Analysis": [https://r4va.netlify.app/chap10](#0)
