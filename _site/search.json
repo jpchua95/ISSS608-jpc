@@ -607,5 +607,61 @@
     "title": "Hands-On Exercise 04c: Visualising Uncertainty",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “11 Visualising Uncertainty”: https://r4va.netlify.app/chap11\n\n↩︎"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "",
+    "text": "The following R packages will be used:\n\nreadr for importing csv into R\nFunnelPlotR for creating funnel plot\nggplot2 for creating funnel plot manually\nknitr for building static html table\nplotly for creating interactive funnel plot\n\n\npacman::p_load(tidyverse, FunnelPlotR, plotly, knitr)\n\nThe code chunk below imports the COVID-19_DKI_Jakarta.csv file into R save it into a tibble data frame object.\n\ncovid19 &lt;- read_csv(\"data/COVID-19_DKI_Jakarta.csv\") %&gt;%\n  mutate_if(is.character, as.factor)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-the-basic-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-the-basic-plot",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "2.1 FunnelPlotR methods: The basic plot",
+    "text": "2.1 FunnelPlotR methods: The basic plot\nThe code chunk below plots a funnel plot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\nA funnel plot object with 267 points of which 0 are outliers. \nPlot is adjusted for overdispersion. \n\n\n\n\n\nfunnel_plot(\n  .data = covid19,\n  numerator = Positive,\n  denominator = Death,\n  group = `Sub-district`\n)\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\ngroup in this function is different from the scatterplot. Here, it defines the level of the points to be plotted i.e. Sub-district, District or City. If Cityc is chosen, there are only six data points\nBy default, data_typeargument is “SR”\nlimit: Plot limits, accepted values are: 95 or 99, corresponding to 95% or 99.8% quantiles of the distribution"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-makeover-1",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-makeover-1",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "2.2 FunnelPlotR methods: Makeover 1",
+    "text": "2.2 FunnelPlotR methods: Makeover 1\nThe code chunk below plots a funnel plot with the following arguments:\n\ndata_type: set the proportions\nxrange and yrange : set the range on x and y axis\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\nA funnel plot object with 267 points of which 7 are outliers. \nPlot is adjusted for overdispersion. \n\n\n\n\n\nfunnel_plot(\n  .data = covid19,\n  numerator = Death,\n  denominator = Positive,\n  group = `Sub-district`,\n  data_type = \"PR\",     #&lt;&lt;\n  xrange = c(0, 6500),  #&lt;&lt;\n  yrange = c(0, 0.05)   #&lt;&lt;\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-makeover-2",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#funnelplotr-methods-makeover-2",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "2.3 FunnelPlotR methods: Makeover 2",
+    "text": "2.3 FunnelPlotR methods: Makeover 2\nThe code chunk below plots a funnel plot with the following arguments:\n\nlabel: remove the default label outliers feature\ntitle: add plot title\nx_label and y_label: add/edit titles on x-axis and y-axis\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\nA funnel plot object with 267 points of which 7 are outliers. \nPlot is adjusted for overdispersion. \n\n\n\n\n\nfunnel_plot(\n  .data = covid19,\n  numerator = Death,\n  denominator = Positive,\n  group = `Sub-district`,\n  data_type = \"PR\",   \n  xrange = c(0, 6500),  \n  yrange = c(0, 0.05),\n  label = NA,\n  title = \"Cumulative COVID-19 Fatality Rate by Cumulative Total Number of COVID-19 Positive Cases\", #&lt;&lt;           \n  x_label = \"Cumulative COVID-19 Positive Cases\", #&lt;&lt;\n  y_label = \"Cumulative Fatality Rate\"  #&lt;&lt;\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#calculate-lower-and-upper-limits-for-95-and-99.9-ci",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#calculate-lower-and-upper-limits-for-95-and-99.9-ci",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "3.1 Calculate lower and upper limits for 95% and 99.9% CI",
+    "text": "3.1 Calculate lower and upper limits for 95% and 99.9% CI\nThe code chunk below computes the lower and upper limits for 95% confidence interval.\n\nnumber.seq &lt;- seq(1, max(df$Positive), 1)\nnumber.ll95 &lt;- fit.mean - 1.96 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ul95 &lt;- fit.mean + 1.96 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ll999 &lt;- fit.mean - 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ul999 &lt;- fit.mean + 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \ndfCI &lt;- data.frame(number.ll95, number.ul95, number.ll999, \n                   number.ul999, number.seq, fit.mean)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#plotting-a-static-funnel-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#plotting-a-static-funnel-plot",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "3.2 Plotting a static funnel plot",
+    "text": "3.2 Plotting a static funnel plot\nThe code chunk below uses ggplot2 functions to plot a static funnel plot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(df, aes(x = Positive, y = rate)) +\n  geom_point(aes(label=`Sub-district`), \n             alpha=0.4) +\n  geom_line(data = dfCI, \n            aes(x = number.seq, \n                y = number.ll95), \n            size = 0.4, \n            colour = \"grey40\", \n            linetype = \"dashed\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, \n                y = number.ul95), \n            size = 0.4, \n            colour = \"grey40\", \n            linetype = \"dashed\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, \n                y = number.ll999), \n            size = 0.4, \n            colour = \"grey40\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, \n                y = number.ul999), \n            size = 0.4, \n            colour = \"grey40\") +\n  geom_hline(data = dfCI, \n             aes(yintercept = fit.mean), \n             size = 0.4, \n             colour = \"grey40\") +\n  coord_cartesian(ylim=c(0,0.05)) +\n  annotate(\"text\", x = 1, y = -0.13, label = \"95%\", size = 3, colour = \"grey40\") + \n  annotate(\"text\", x = 4.5, y = -0.18, label = \"99%\", size = 3, colour = \"grey40\") + \n  ggtitle(\"Cumulative Fatality Rate by Cumulative Number of COVID-19 Cases\") +\n  xlab(\"Cumulative Number of COVID-19 Cases\") + \n  ylab(\"Cumulative Fatality Rate\") +\n  theme_light() +\n  theme(plot.title = element_text(size=12),\n        legend.position = c(0.91,0.85), \n        legend.title = element_text(size=7),\n        legend.text = element_text(size=7),\n        legend.background = element_rect(colour = \"grey60\", linetype = \"dotted\"),\n        legend.key.height = unit(0.3, \"cm\"))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#interactive-funnel-plot-plotly-ggplot2",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#interactive-funnel-plot-plotly-ggplot2",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "3.3 Interactive Funnel Plot: plotly + ggplot2",
+    "text": "3.3 Interactive Funnel Plot: plotly + ggplot2\nThe funnel plot created using ggplot2 functions can be made interactive with ggplotly() of plotly R package.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\nfp_ggplotly &lt;- ggplotly(p,\n  tooltip = c(\"label\", \n              \"x\", \n              \"y\"))\nfp_ggplotly\n\n\n\n\n1"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html#footnotes",
+    "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “12 Funnel Plots for Fair Comparisons”: https://r4va.netlify.app/chap12\n\n↩︎"
   }
 ]

@@ -176,7 +176,7 @@ In this section, the `readxl`, `performance`, `parameters` and `see` packages wi
 pacman::p_load(readxl, performance, parameters, see)
 ```
 
-In the code chunk below, [`read_xls()`](https://readxl.tidyverse.org/reference/read_excel.html) of [*readxl*](#0)package is used to import the data worksheet of *ToyotaCorolla.xls* workbook into R.
+In the code chunk below, [`read_xls()`](https://readxl.tidyverse.org/reference/read_excel.html) of [*readxl*](#0) package is used to import the data worksheet of *ToyotaCorolla.xls* workbook into R.
 
 ```{r}
 car_resale <- read_xls("data/ToyotaCorolla.xls", 
