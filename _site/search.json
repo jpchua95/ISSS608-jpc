@@ -551,5 +551,61 @@
     "title": "Hands-On Exercise 04b: Visual Statistical Analysis",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “10 Visual Statistical Analysis”: https://r4va.netlify.app/chap10\n\n↩︎"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "",
+    "text": "The following R packages will be used::\n\ntidyverse: a family of R packages for data science process\nplotly: for creating interactive plot\ngganimate: for creating animation plot\nDT for displaying interactive html table\ncrosstalk: for implementing cross-widget interactions (currently, linked brushing and filtering)\nggdist: for visualising distribution and uncertainty\n\n\npacman::p_load(plotly, crosstalk, DT, \n               ggdist, ggridges, colorspace,\n               gganimate, tidyverse)\n\nThe code chunk below imports the Exam_data.csv file into R.\n\nexam &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#plotting-standard-error-bars-of-point-estimates",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#plotting-standard-error-bars-of-point-estimates",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "2.1 Plotting standard error bars of point estimates",
+    "text": "2.1 Plotting standard error bars of point estimates\nPlotting the standard error bars of mean MATHS score by RACE.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(my_sum) +\n  geom_errorbar(\n    aes(x=RACE, \n        ymin=mean-se, \n        ymax=mean+se), \n    width=0.2, \n    colour=\"black\", \n    alpha=0.9, \n    linewidth=0.5) +\n  geom_point(aes\n           (x=RACE, \n            y=mean), \n           stat=\"identity\", \n           color=\"red\",\n           size = 1.5,\n           alpha=1) +\n  ggtitle(\"Standard error of mean MATHS score by RACE\")\n\n\n\n\n\n\n\nNote\n\n\n\n\nThe error bars are computed by using the formula mean +/- standard error\nFor geom_point(), it is important to indicate stat=“identity”"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#plotting-confidence-interval-of-point-estimates",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#plotting-confidence-interval-of-point-estimates",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "2.2 Plotting confidence interval of point estimates",
+    "text": "2.2 Plotting confidence interval of point estimates\nPlotting the confidence intervals of mean MATHS score by RACE.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(my_sum) +\n  geom_errorbar(\n    aes(x=reorder(RACE, -mean), \n        ymin=mean-1.96*se, \n        ymax=mean+1.96*se), \n    width=0.2, \n    colour=\"black\", \n    alpha=0.9, \n    linewidth=0.5) +\n  geom_point(aes\n           (x=RACE, \n            y=mean), \n           stat=\"identity\", \n           color=\"red\",\n           size = 1.5,\n           alpha=1) +\n  labs(x = \"Maths score\",\n       title = \"95% confidence interval of mean maths score by race\")\n\n\n\n\n\n\n\nNote\n\n\n\n\nThe confidence intervals are computed by using the formula mean +/- 1.96*(standard error)\nThe error bars is sorted by using the average maths scores\nlabs() argument of ggplot2 is used to change the x-axis label"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-with-interactive-error-bars",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "2.3 Visualizing the uncertainty of point estimates with interactive error bars",
+    "text": "2.3 Visualizing the uncertainty of point estimates with interactive error bars\nPlotting interactive error bars for the 99% confidence interval of mean MATHS score by RACE.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nshared_df = SharedData$new(my_sum)\n\nbscols(widths = c(4,8),\n       ggplotly((ggplot(shared_df) +\n                   geom_errorbar(aes(\n                     x=reorder(RACE, -mean),\n                     ymin=mean-2.58*se, \n                     ymax=mean+2.58*se), \n                     width=0.2, \n                     colour=\"black\", \n                     alpha=0.9, \n                     size=0.5) +\n                   geom_point(aes(\n                     x=RACE, \n                     y=mean, \n                     text = paste(\"Race:\", `RACE`, \n                                  \"&lt;br&gt;N:\", `n`,\n                                  \"&lt;br&gt;Avg. Scores:\", round(mean, digits = 2),\n                                  \"&lt;br&gt;95% CI:[\", \n                                  round((mean-2.58*se), digits = 2), \",\",\n                                  round((mean+2.58*se), digits = 2),\"]\")),\n                     stat=\"identity\", \n                     color=\"red\", \n                     size = 1.5, \n                     alpha=1) + \n                   xlab(\"Race\") + \n                   ylab(\"Average Scores\") + \n                   theme_minimal() + \n                   theme(axis.text.x = element_text(\n                     angle = 45, vjust = 0.5, hjust=1)) +\n                   ggtitle(\"99% Confidence interval of average /&lt;br&gt;maths scores by race\")), \n                tooltip = \"text\"), \n       DT::datatable(shared_df, \n                     rownames = FALSE, \n                     class=\"compact\", \n                     width=\"100%\", \n                     options = list(pageLength = 10,\n                                    scrollX=T), \n                     colnames = c(\"No. of pupils\", \n                                  \"Avg Scores\",\n                                  \"Std Dev\",\n                                  \"Std Error\")) %&gt;%\n         formatRound(columns=c('mean', 'sd', 'se'),\n                     digits=2))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "3.1 Visualizing the uncertainty of point estimates: ggdist methods",
+    "text": "3.1 Visualizing the uncertainty of point estimates: ggdist methods\nstat_pointinterval() of ggdist is used to build a visual for displaying distribution of MATHS scores by RACE.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nexam %&gt;%\n  ggplot(aes(x = RACE, \n             y = MATHS)) +\n  stat_pointinterval() +\n  labs(\n    title = \"Visualising confidence intervals of mean math score\",\n    subtitle = \"Mean Point + Multiple-interval plot\")\n\n\n\n\nSome arguments can be added to the stat_pointinterval() function. For example:\n\n.width = 0.95\n.point = median\n.interval = qi\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nexam %&gt;%\n  ggplot(aes(x = RACE, y = MATHS)) +\n  stat_pointinterval(.width = 0.95,\n  .point = median,\n  .interval = qi) +\n  labs(\n    title = \"Visualising confidence intervals of median math score\",\n    subtitle = \"Median Point + Multiple-interval plot\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-1",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "3.2 Visualizing the uncertainty of point estimates: ggdist methods",
+    "text": "3.2 Visualizing the uncertainty of point estimates: ggdist methods\nShowing the 95% and 99% confidence interval in the code chunk below.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nexam %&gt;%\n  ggplot(aes(x = RACE, y = MATHS)) +\n  stat_pointinterval(.width = c(0.95,0.99),\n  .point = median,\n  .interval = qi,\n  show.legend = TRUE) +\n  labs(\n    title = \"Visualising confidence intervals of median math score\",\n    subtitle = \"Median Point + Multiple-interval plot\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#visualizing-the-uncertainty-of-point-estimates-ggdist-methods-2",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "3.3 Visualizing the uncertainty of point estimates: ggdist methods",
+    "text": "3.3 Visualizing the uncertainty of point estimates: ggdist methods\nstat_gradientinterval() of ggdist is used to build a visual for displaying distribution of MATHS scores by RACE.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nexam %&gt;%\n  ggplot(aes(x = RACE, \n             y = MATHS)) +\n  stat_gradientinterval(   \n    fill = \"skyblue\",      \n    show.legend = TRUE     \n  ) +                        \n  labs(\n    title = \"Visualising confidence intervals of mean math score\",\n    subtitle = \"Gradient + interval plot\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html#footnotes",
+    "title": "Hands-On Exercise 04c: Visualising Uncertainty",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “11 Visualising Uncertainty”: https://r4va.netlify.app/chap11\n\n↩︎"
   }
 ]
