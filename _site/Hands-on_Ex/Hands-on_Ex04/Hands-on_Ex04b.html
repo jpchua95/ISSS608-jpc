@@ -199,6 +199,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-3_17383934113260/Story">
  <span class="dropdown-text">In-Class Exercise 3 (Story)</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex04/In-class_Ex04.html">
+ <span class="dropdown-text">In-Class Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -274,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 6, 2025</p>
+      <p class="date-modified">February 8, 2025</p>
     </div>
   </div>
     
@@ -358,6 +362,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p><code>type = "np"</code>: type is non-parametric, i.e.&nbsp;dataset might not conform to normality assumptions</p>
+<p>The denser/cluttered the plot, the more datapoints are there.</p>
 </section>
 <section id="oneway-anova-test-ggbetweenstats-method" class="level2">
 <h2 class="anchored" data-anchor-id="oneway-anova-test-ggbetweenstats-method">2.4 Oneway ANOVA Test: <em>ggbetweenstats()</em> method</h2>
@@ -388,6 +394,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>“s”: only significant</p></li>
 <li><p>“all”: everything</p></li>
 </ul>
+<p>For the argument <code>type</code>, here are the values we can use:</p>
+<ul>
+<li><p>“parametric”</p></li>
+<li><p>“nonparametric”</p></li>
+<li><p>“robust”</p></li>
+<li><p>“bayes”</p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can specify just the initial letter.</p>
+</div>
+</div>
 <p>Here is an example showing all (significant and non-significant) pairwise display.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(</span>
@@ -426,6 +452,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="Hands-on_Ex04b_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>marginal = FALSE</code>: to remove the marginal plots.</p>
+<p>By default, <code>marginal = TRUE</code> and the marginal plots will be displayed.</p>
 </div>
 </div>
 </section>
@@ -470,6 +510,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Take note of the number of observations.</p>
+<p>The plot displays 100% of each set of observations, i.e.&nbsp;100% of 170 (Female) and 100% of 152 (Male) respectively.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="visualising-models" class="level1">
@@ -478,7 +532,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(readxl, performance, parameters, see)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>In the code chunk below, <a href="https://readxl.tidyverse.org/reference/read_excel.html"><code>read_xls()</code></a> of <a href="#0"><em>readxl</em></a>package is used to import the data worksheet of <em>ToyotaCorolla.xls</em> workbook into R.</p>
+<p>In the code chunk below, <a href="https://readxl.tidyverse.org/reference/read_excel.html"><code>read_xls()</code></a> of <a href="#0"><em>readxl</em></a> package is used to import the data worksheet of <em>ToyotaCorolla.xls</em> workbook into R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>car_resale <span class="ot">&lt;-</span> <span class="fu">read_xls</span>(<span class="st">"data/ToyotaCorolla.xls"</span>, </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"data"</span>)</span>
