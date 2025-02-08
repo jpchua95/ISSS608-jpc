@@ -1,0 +1,253 @@
+---
+title: "Hands-On Exercise 05b: Visual Correlation Analysis"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+Correlation coefficient is commonly used to measure the type and strength of the relationship between 2 variables.
+
+The values of a correlation coefficient ranges between -1 and 1.
+
+-   1: shows a perfect linear relationship between 2 variables
+
+-   -1: shows a perfect inverse relationship between 2 variables
+
+-   0: shows no linear relationship between 2 variables
+
+When multivariate data are used, the correlation coefficeints of the pair comparisons are displayed in a table form known as correlation matrix or scatterplot matrix.
+
+When the data is large, both in terms of the number of observations and the number of variables, [Corrgram](http://www.datavis.ca/papers/corrgram.pdf) tend to be used to visually explore and analyse the structure and the patterns of relations among variables.
+
+We will launch `corrplot`, `ggpubr`, `plotly`, `tidyverse` in R.
+
+```{r}
+pacman::p_load(corrplot, ggstatsplot, tidyverse)
+```
+
+The code chunk below imports the *wine_quality.csv* file into R using the `read_csv()` function of *readr* package.
+
+```{r}
+wine <- read_csv("data/wine_quality.csv")
+```
+
+::: callout-note
+Other than `quality` and `type`, the rest of the variables are numerical and continuous data type.
+:::
+
+# 2 Building Correlation Matrix: *pairs()* method
+
+We will create scatterplot matrix using the [*pairs*](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/pairs.html) function of R Graphics.
+
+## 2.1 Building a basic correlation matrix
+
+The code chunk below plots a 11 x 11 scatter plot matrix of the Wine Quality data.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+pairs(wine[,1:11])
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+pairs(wine[,1:11])
+```
+:::
+
+The required input of `pairs()` can be a matrix or data frame. The code chunk below plots the scatterplot matrix with columns 2 to 12 of the wine dataframe.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+pairs(wine[,2:12])
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+pairs(wine[,2:12])
+```
+:::
+
+## 2.2 Drawing the lower corner
+
+Since a correlation matrix is symmetric, it is common to show either the upper or lower half of the matrix.
+
+The `upper.panel` argument is used to show the lower half of the correlation matrix.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+pairs(wine[,2:12], upper.panel = NULL)
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+pairs(wine[,2:12], upper.panel = NULL)
+```
+:::
+
+Similarly, the `lower.panel` argument is used to show the upper half of the correlation matrix.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+pairs(wine[,2:12], lower.panel = NULL)
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+pairs(wine[,2:12], lower.panel = NULL)
+```
+:::
+
+## 2.3 Including with correlation coefficients
+
+[`panel.cor`](https://www.rdocumentation.org/packages/xcms/versions/1.48.0/topics/panel.cor) function can be used to show the correlation coefficient of each pair of variables instead of a scatter plot. This will also show higher correlations in a larger font.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+usr <- par("usr")
+on.exit(par(usr))
+par(usr = c(0, 1, 0, 1))
+r <- abs(cor(x, y, use="complete.obs"))
+txt <- format(c(r, 0.123456789), digits=digits)[1]
+txt <- paste(prefix, txt, sep="")
+if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+}
+
+pairs(wine[,2:12], 
+      upper.panel = panel.cor)
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+usr <- par("usr")
+on.exit(par(usr))
+par(usr = c(0, 1, 0, 1))
+r <- abs(cor(x, y, use="complete.obs"))
+txt <- format(c(r, 0.123456789), digits=digits)[1]
+txt <- paste(prefix, txt, sep="")
+if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+}
+
+pairs(wine[,2:12], 
+      upper.panel = panel.cor)
+```
+:::
+
+# 3. Visualising Correlation Matrix: *ggcormat()*
+
+Scatter plots might appear very cluttered when the number of observations is relatively large (i.e. more than 500). Corrgram data visualisation technique can be used to overcome this problem.
+
+The are at least three R packages provide function to plot *corrgram*:
+
+-   [corrgram](https://cran.r-project.org/web/packages/corrgram/index.html)
+
+-   [ellipse](https://cran.r-project.org/web/packages/ellipse/index.html)
+
+-   [corrplot](https://cran.r-project.org/web/packages/corrplot/index.html)
+
+The code chunk below visualises correlation matrix using `ggcorrmat()`.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11)
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11)
+```
+:::
+
+The code chunk below adds title, subtitle and aesthetic elements to the plot.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+```
+:::
+
+::: callout-note
+-   `cor.vars` argument is used to compute the correlation matrix needed to build the *corrgram*.
+
+-   `ggcorrplot.args` argument provide additional (mostly aesthetic) arguments that will be passed to [`ggcorrplot::ggcorrplot`](http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2) function. The list should avoid any of the following arguments since they are already internally being used: `corr`, `method`, `p.mat`, `sig.level`, `ggtheme`, `colors`, `lab`, `pch`, `legend.title`, `digits`.
+:::
+
+The following sub-code chunk can be used to control specific component of the plot such as the font size of the x-axis, y-axis, and the statistical report.
+
+```{r}
+ggplot.component = list(
+    theme(text=element_text(size=5),
+      axis.text.x = element_text(size = 8),
+      axis.text.y = element_text(size = 8)))
+```
+
+# 4. Building Multiple Plots

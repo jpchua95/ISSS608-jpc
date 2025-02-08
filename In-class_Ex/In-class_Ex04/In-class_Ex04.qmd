@@ -1,0 +1,109 @@
+---
+title: "In-class_Ex04"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+We will launch the following packages in R.
+
+```{r}
+pacman::p_load(haven, SmartEDA, tidyverse, 
+               tidymodels, ggridges, ggthemes,
+               colorspace, ggdist)
+```
+
+::: callout-note
+`tidyverse` is a collection of R packages for data science.
+
+In `tidyverse`, `dplyr` is useful for data transformation. `ggplot2` is useful for visualisation.
+:::
+
+The code chunk below imports the *Exam_data.csv* file into R using the `read_csv()` function of *readr* package.
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+# 2. Box plot
+
+```{r}
+ggplot(data = exam_data,
+       aes(y = CLASS,
+           x = ENGLISH)) + 
+    geom_boxplot() 
+```
+
+::: callout-note
+Use `coord_flip()` to rotate the axis, or simply switch the variables in `x=` and `y=`.
+:::
+
+Boxplot is incomplete as it shows the summary statistics, instead of the distribution. To show distribution, ridgelines plot will help us visualise better.
+
+```{r}
+ggplot(exam_data, 
+       aes(x = ENGLISH, 
+           y = CLASS)) +
+  geom_density_ridges()
+```
+
+#  3. Additional Notes
+
+```{r}
+ggplot(exam_data, 
+       aes(x = ENGLISH, 
+           y = CLASS)) +
+  geom_density_ridges(
+    scale = 3,
+    rel_min_height = 0.01,
+    bandwidth = 3.4,
+    fill = lighten("#7097BB", .3),
+    color = "white"
+  ) +
+  scale_x_continuous(
+    name = "English grades",
+    expand = c(0, 0)
+    ) +
+  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
+  theme_ridges()
+```
+
+-   `geom_density_ridges()`: Extra geometric that supports the creation of ridge line
+
+-   `scale_x_continuous()` and `scale_y_discrete()`: belong to *ggplot2*, for continuous and discrete values respectively
+
+-   `expand = expansion(add = c(0.2, 2.6))`: makes the plot visually nicer
+
+-   `fill = lighten("#7097BB", .3)`: fill each plot with a specific colour
+
+-   `color = "white"`: border colour
+
+-   Features of different packages can be combined
+
+```{r}
+ggplot(exam_data, 
+       aes(x = RACE, 
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  stat_dots(side = "left", 
+            justification = 1.2, 
+            binwidth = .5,
+            dotsize = 2)
+```
+
+-   Dotplot provides details of the distribution
+
+    -   also allows us to view the proportion of data, e.g. "Others" contains fewer datapoints
+
+-   Ridgeline plot smoothens out the distribution

@@ -1,0 +1,195 @@
+---
+title: "Hands-On Exercise 05a: Creating Ternary Plot with R"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+2 main R packages will be used:
+
+-   [**ggtern**](http://www.ggtern.com/): a ggplot extension specially designed to plot ternary diagrams. The package will be used to plot static ternary plots.
+
+-   [**Plotly R**](https://plot.ly/r/): an R package for creating interactive web-based graphs via plotly’s JavaScript graphing library, plotly.js. The *plotly R* libary contains the *ggplotly* function, which will convert *ggplot2* figures into a Plotly object.
+
+```{r}
+pacman::p_load(plotly, ggtern, tidyverse)
+```
+
+::: callout-note
+V3.2.1 of *ggplot2* will be installed instead of the latest version of *ggplot2*. This is because the current version of *ggtern* package is not compatible to the latest version of *ggplot2*.
+:::
+
+The code chunk below imports the *respopagsex2000to2018_tidy.csv* file into R using the `read_csv()` function of *readr* package.
+
+```{r}
+pop_data <- read_csv("data/respopagsex2000to2018_tidy.csv") 
+```
+
+We use the `mutate()` function of *dplyr* package to derive three new measures: young, active, and old.
+
+```{r}
+agpop_mutated <- pop_data %>%
+  mutate(`Year` = as.character(Year))%>%
+  spread(AG, Population) %>%
+  mutate(YOUNG = rowSums(.[4:8]))%>%
+  mutate(ACTIVE = rowSums(.[9:16]))  %>%
+  mutate(OLD = rowSums(.[17:21])) %>%
+  mutate(TOTAL = rowSums(.[22:24])) %>%
+  filter(Year == 2018)%>%
+  filter(TOTAL > 0)
+
+agpop_mutated
+```
+
+# 2. Plotting Ternary Diagram with R
+
+## 2.1 Plotting a static ternary diagram
+
+Use `ggtern()` function of *ggtern* package to create a simple static ternary plot.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```
+:::
+
+The code chunk below adds label and a theme with colours to the plot.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+:::
+
+## 2.2 Plotting an interactive ternary diagram
+
+The code chunk below creates an interactive ternary plot using `plot_ly()` function of *Plotly R*.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: FALSE
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+
+#### The code
+
+```{r}
+#| eval: FALSE
+# Reusable function for creating annotation object
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+# Reusable function for axis formatting
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+# Initiating a plotly visualization 
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+:::
+
+[^1]
+
+[^1]: This document was completed with reference to:
+
+    -   Prof Kam's notes "13 Creating Ternary Plot with R": <https://r4va.netlify.app/chap13>

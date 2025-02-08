@@ -663,5 +663,68 @@
     "title": "Hands-On Exercise 04d: Funnel Plots for Fair Comparisons",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “12 Funnel Plots for Fair Comparisons”: https://r4va.netlify.app/chap12\n\n↩︎"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "href": "In-class_Ex/In-class_Ex04/In-class_Ex04.html",
+    "title": "In-class_Ex04",
+    "section": "",
+    "text": "1. Getting Started\nWe will launch the following packages in R.\n\npacman::p_load(haven, SmartEDA, tidyverse, \n               tidymodels, ggridges, ggthemes,\n               colorspace, ggdist)\n\n\n\n\n\n\n\nNote\n\n\n\ntidyverse is a collection of R packages for data science.\nIn tidyverse, dplyr is useful for data transformation. ggplot2 is useful for visualisation.\n\n\nThe code chunk below imports the Exam_data.csv file into R using the read_csv() function of readr package.\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\n\n\n2. Box plot\n\nggplot(data = exam_data,\n       aes(y = CLASS,\n           x = ENGLISH)) + \n    geom_boxplot() \n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nUse coord_flip() to rotate the axis, or simply switch the variables in x= and y=.\n\n\nBoxplot is incomplete as it shows the summary statistics, instead of the distribution. To show distribution, ridgelines plot will help us visualise better.\n\nggplot(exam_data, \n       aes(x = ENGLISH, \n           y = CLASS)) +\n  geom_density_ridges()\n\n\n\n\n\n\n\n\n\n\n3. Additional Notes\n\nggplot(exam_data, \n       aes(x = ENGLISH, \n           y = CLASS)) +\n  geom_density_ridges(\n    scale = 3,\n    rel_min_height = 0.01,\n    bandwidth = 3.4,\n    fill = lighten(\"#7097BB\", .3),\n    color = \"white\"\n  ) +\n  scale_x_continuous(\n    name = \"English grades\",\n    expand = c(0, 0)\n    ) +\n  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +\n  theme_ridges()\n\n\n\n\n\n\n\n\n\ngeom_density_ridges(): Extra geometric that supports the creation of ridge line\nscale_x_continuous() and scale_y_discrete(): belong to ggplot2, for continuous and discrete values respectively\nexpand = expansion(add = c(0.2, 2.6)): makes the plot visually nicer\nfill = lighten(\"#7097BB\", .3): fill each plot with a specific colour\ncolor = \"white\": border colour\nFeatures of different packages can be combined\n\n\nggplot(exam_data, \n       aes(x = RACE, \n           y = ENGLISH)) +\n  stat_halfeye(adjust = 0.5,\n               justification = -0.2,\n               .width = 0,\n               point_colour = NA) +\n  geom_boxplot(width = .20,\n               outlier.shape = NA) +\n  stat_dots(side = \"left\", \n            justification = 1.2, \n            binwidth = .5,\n            dotsize = 2)\n\n\n\n\n\n\n\n\n\nDotplot provides details of the distribution\n\nalso allows us to view the proportion of data, e.g. “Others” contains fewer datapoints\n\nRidgeline plot smoothens out the distribution"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html",
+    "title": "Hands-On Exercise 05b: Visual Correlation Analysis",
+    "section": "",
+    "text": "Correlation coefficient is commonly used to measure the type and strength of the relationship between 2 variables.\nThe values of a correlation coefficient ranges between -1 and 1.\n\n1: shows a perfect linear relationship between 2 variables\n-1: shows a perfect inverse relationship between 2 variables\n0: shows no linear relationship between 2 variables\n\nWhen multivariate data are used, the correlation coefficeints of the pair comparisons are displayed in a table form known as correlation matrix or scatterplot matrix.\nWhen the data is large, both in terms of the number of observations and the number of variables, Corrgram tend to be used to visually explore and analyse the structure and the patterns of relations among variables.\nWe will launch corrplot, ggpubr, plotly, tidyverse in R.\n\npacman::p_load(corrplot, ggstatsplot, tidyverse)\n\nThe code chunk below imports the wine_quality.csv file into R using the read_csv() function of readr package.\n\nwine &lt;- read_csv(\"data/wine_quality.csv\")\n\n\n\n\n\n\n\nNote\n\n\n\nOther than quality and type, the rest of the variables are numerical and continuous data type."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#building-a-basic-correlation-matrix",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#building-a-basic-correlation-matrix",
+    "title": "Hands-On Exercise 05b: Visual Correlation Analysis",
+    "section": "2.1 Building a basic correlation matrix",
+    "text": "2.1 Building a basic correlation matrix\nThe code chunk below plots a 11 x 11 scatter plot matrix of the Wine Quality data.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npairs(wine[,1:11])\n\n\n\n\nThe required input of pairs() can be a matrix or data frame. The code chunk below plots the scatterplot matrix with columns 2 to 12 of the wine dataframe.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npairs(wine[,2:12])"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#drawing-the-lower-corner",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#drawing-the-lower-corner",
+    "title": "Hands-On Exercise 05b: Visual Correlation Analysis",
+    "section": "2.2 Drawing the lower corner",
+    "text": "2.2 Drawing the lower corner\nSince a correlation matrix is symmetric, it is common to show either the upper or lower half of the matrix.\nThe upper.panel argument is used to show the lower half of the correlation matrix.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npairs(wine[,2:12], upper.panel = NULL)\n\n\n\n\nSimilarly, the lower.panel argument is used to show the upper half of the correlation matrix.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npairs(wine[,2:12], lower.panel = NULL)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#including-with-correlation-coefficients",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html#including-with-correlation-coefficients",
+    "title": "Hands-On Exercise 05b: Visual Correlation Analysis",
+    "section": "2.3 Including with correlation coefficients",
+    "text": "2.3 Including with correlation coefficients\npanel.cor function can be used to show the correlation coefficient of each pair of variables instead of a scatter plot. This will also show higher correlations in a larger font.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npanel.cor &lt;- function(x, y, digits=2, prefix=\"\", cex.cor, ...) {\nusr &lt;- par(\"usr\")\non.exit(par(usr))\npar(usr = c(0, 1, 0, 1))\nr &lt;- abs(cor(x, y, use=\"complete.obs\"))\ntxt &lt;- format(c(r, 0.123456789), digits=digits)[1]\ntxt &lt;- paste(prefix, txt, sep=\"\")\nif(missing(cex.cor)) cex.cor &lt;- 0.8/strwidth(txt)\ntext(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)\n}\n\npairs(wine[,2:12], \n      upper.panel = panel.cor)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html",
+    "title": "Hands-On Exercise 05a: Creating Ternary Plot with R",
+    "section": "",
+    "text": "2 main R packages will be used:\n\nggtern: a ggplot extension specially designed to plot ternary diagrams. The package will be used to plot static ternary plots.\nPlotly R: an R package for creating interactive web-based graphs via plotly’s JavaScript graphing library, plotly.js. The plotly R libary contains the ggplotly function, which will convert ggplot2 figures into a Plotly object.\n\n\npacman::p_load(plotly, ggtern, tidyverse)\n\n\n\n\n\n\n\nNote\n\n\n\nV3.2.1 of ggplot2 will be installed instead of the latest version of ggplot2. This is because the current version of ggtern package is not compatible to the latest version of ggplot2.\n\n\nThe code chunk below imports the respopagsex2000to2018_tidy.csv file into R using the read_csv() function of readr package.\n\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\") \n\nWe use the mutate() function of dplyr package to derive three new measures: young, active, and old.\n\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)\n\nagpop_mutated\n\n# A tibble: 234 × 25\n   PA         SZ       Year  `AGE0-4` `AGE05-9` `AGE10-14` `AGE15-19` `AGE20-24`\n   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;\n 1 Ang Mo Kio Ang Mo … 2018       180       270        320        300        260\n 2 Ang Mo Kio Cheng S… 2018      1060      1080       1080       1260       1400\n 3 Ang Mo Kio Chong B… 2018       900       900       1030       1220       1380\n 4 Ang Mo Kio Kebun B… 2018       720       850       1010       1120       1230\n 5 Ang Mo Kio Sembawa… 2018       220       310        380        500        550\n 6 Ang Mo Kio Shangri… 2018       550       630        670        780        950\n 7 Ang Mo Kio Tagore   2018       260       340        430        500        640\n 8 Ang Mo Kio Townsvi… 2018       830       930        930        860       1020\n 9 Ang Mo Kio Yio Chu… 2018       160       160        220        260        350\n10 Ang Mo Kio Yio Chu… 2018       810      1070       1300       1450       1500\n# ℹ 224 more rows\n# ℹ 17 more variables: `AGE25-29` &lt;dbl&gt;, `AGE30-34` &lt;dbl&gt;, `AGE35-39` &lt;dbl&gt;,\n#   `AGE40-44` &lt;dbl&gt;, `AGE45-49` &lt;dbl&gt;, `AGE50-54` &lt;dbl&gt;, `AGE55-59` &lt;dbl&gt;,\n#   `AGE60-64` &lt;dbl&gt;, `AGE65-69` &lt;dbl&gt;, `AGE70-74` &lt;dbl&gt;, `AGE75-79` &lt;dbl&gt;,\n#   `AGE80-84` &lt;dbl&gt;, AGE85over &lt;dbl&gt;, YOUNG &lt;dbl&gt;, ACTIVE &lt;dbl&gt;, OLD &lt;dbl&gt;,\n#   TOTAL &lt;dbl&gt;"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#plotting-a-static-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#plotting-a-static-ternary-diagram",
+    "title": "Hands-On Exercise 05a: Creating Ternary Plot with R",
+    "section": "2.1 Plotting a static ternary diagram",
+    "text": "2.1 Plotting a static ternary diagram\nUse ggtern() function of ggtern package to create a simple static ternary plot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\nThe code chunk below adds label and a theme with colours to the plot.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#plotting-an-interactive-ternary-diagram",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#plotting-an-interactive-ternary-diagram",
+    "title": "Hands-On Exercise 05a: Creating Ternary Plot with R",
+    "section": "2.2 Plotting an interactive ternary diagram",
+    "text": "2.2 Plotting an interactive ternary diagram\nThe code chunk below creates an interactive ternary plot using plot_ly() function of Plotly R.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n# Reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# Reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )\n\n\n\n\n1"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html#footnotes",
+    "title": "Hands-On Exercise 05a: Creating Ternary Plot with R",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “13 Creating Ternary Plot with R”: https://r4va.netlify.app/chap13\n\n↩︎"
   }
 ]

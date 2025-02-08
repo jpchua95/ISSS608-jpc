@@ -81,6 +81,10 @@ ggbetweenstats(
 )
 ```
 
+`type = "np"`: type is non-parametric, i.e. dataset might not conform to normality assumptions
+
+The denser/cluttered the plot, the more datapoints are there.
+
 ## 2.4 Oneway ANOVA Test: *ggbetweenstats()* method
 
 In the code chunk below, [`ggbetweenstats()`](#0)is used to build a visual for One-way ANOVA test on English score by race.
@@ -106,6 +110,20 @@ For the argument `pairwise.display`, here are the values we can use:
 -   “s”: only significant
 
 -   “all”: everything
+
+For the argument `type`, here are the values we can use:
+
+-   "parametric"
+
+-   "nonparametric"
+
+-   "robust"
+
+-   "bayes"
+
+::: callout-note
+You can specify just the initial letter.
+:::
 
 Here is an example showing all (significant and non-significant) pairwise display.
 
@@ -135,6 +153,12 @@ ggscatterstats(
   marginal = FALSE,
   )
 ```
+
+::: callout-note
+`marginal = FALSE`: to remove the marginal plots.
+
+By default, `marginal = TRUE` and the marginal plots will be displayed.
+:::
 
 ## 2.6 Significant Test of Association (Depedence): *ggbarstats()* methods
 
@@ -167,6 +191,12 @@ ggbarstats(exam1,
            x = MATHS_bins, 
            y = GENDER)
 ```
+
+::: callout-note
+Take note of the number of observations.
+
+The plot displays 100% of each set of observations, i.e. 100% of 170 (Female) and 100% of 152 (Male) respectively.
+:::
 
 # 3. Visualising Models
 
