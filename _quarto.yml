@@ -58,7 +58,7 @@ website:
       - text: "Take-Home Exercise"
         menu:
         - text: "Take-home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
-          href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
+          href: Take-home_Ex/Take-home_Ex0/Take-home_Ex0.html
 
 format:
   html:
