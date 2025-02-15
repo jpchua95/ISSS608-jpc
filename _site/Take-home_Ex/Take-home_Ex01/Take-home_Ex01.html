@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -116,8 +150,48 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Hands-On Exercise 2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
- <span class="dropdown-text">Hands-On Exercise 3</span></a>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03a.html">
+ <span class="dropdown-text">Hands-On Exercise 3a</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03b.html">
+ <span class="dropdown-text">Hands-On Exercise 3b</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04a.html">
+ <span class="dropdown-text">Hands-On Exercise 4a</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04b.html">
+ <span class="dropdown-text">Hands-On Exercise 4b</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04c.html">
+ <span class="dropdown-text">Hands-On Exercise 4c</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04d.html">
+ <span class="dropdown-text">Hands-On Exercise 4d</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05a.html">
+ <span class="dropdown-text">Hands-On Exercise 5a</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05b.html">
+ <span class="dropdown-text">Hands-On Exercise 5b</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05c.html">
+ <span class="dropdown-text">Hands-On Exercise 5c</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05d.html">
+ <span class="dropdown-text">Hands-On Exercise 5d</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05e.html">
+ <span class="dropdown-text">Hands-On Exercise 5e</span></a>
   </li>  
     </ul>
   </li>
@@ -146,6 +220,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-3_17383934113260/Story">
  <span class="dropdown-text">In-Class Exercise 3 (Story)</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex04/In-class_Ex04.html">
+ <span class="dropdown-text">In-Class Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -170,8 +248,21 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">1. Introduction</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">2. Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#loading-the-relevant-libraries" id="toc-loading-the-relevant-libraries" class="nav-link" data-scroll-target="#loading-the-relevant-libraries">2.1 Loading the relevant libraries</a></li>
+  <li><a href="#data-source-and-importing-data" id="toc-data-source-and-importing-data" class="nav-link" data-scroll-target="#data-source-and-importing-data">2.2 Data source and importing data</a></li>
+  </ul></li>
+  <li><a href="#data-pre-processing" id="toc-data-pre-processing" class="nav-link" data-scroll-target="#data-pre-processing">3. Data Pre-Processing</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">4. Exploratory Data Analysis</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -202,7 +293,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 1, 2025</p>
+      <p class="date-modified">February 15, 2025</p>
     </div>
   </div>
     
@@ -213,8 +304,187 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="introduction" class="level1">
+<h1>1. Introduction</h1>
+</section>
+<section id="getting-started" class="level1">
+<h1>2. Getting Started</h1>
+<p>(intro and significance of data)</p>
+<section id="loading-the-relevant-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-relevant-libraries">2.1 Loading the relevant libraries</h2>
+<p>The following R packages will be used:</p>
+<ul>
+<li><p><code>tidyverse</code>:</p></li>
+<li><p><code>performance</code>:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-source-and-importing-data" class="level2">
+<h2 class="anchored" data-anchor-id="data-source-and-importing-data">2.2 Data source and importing data</h2>
+<p>In this assignment, the “Heart Attack in Japan Youth Vs Adult” data will be used. The dataset is retrieved from <a href="https://www.kaggle.com/datasets/ashaychoudhary/heart-attack-in-japan-youth-vs-adult?resource=download">Kaggle</a>.</p>
+<p>We import the dataset, <code>japan_heart_attack_dataset.csv</code>, using <code>read_csv()</code> of <em>readr</em> package into R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>heart_attack <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/japan_heart_attack_dataset.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="data-pre-processing" class="level1">
+<h1>3. Data Pre-Processing</h1>
+<p>View data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(heart_attack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 30,000
+Columns: 32
+$ Age                     &lt;dbl&gt; 56, 69, 46, 32, 60, 25, 78, 38, 56, 75, 36, 40…
+$ Gender                  &lt;chr&gt; "Male", "Male", "Male", "Female", "Female", "F…
+$ Region                  &lt;chr&gt; "Urban", "Urban", "Rural", "Urban", "Rural", "…
+$ Smoking_History         &lt;chr&gt; "Yes", "No", "Yes", "No", "No", "No", "No", "Y…
+$ Diabetes_History        &lt;chr&gt; "No", "No", "No", "No", "No", "No", "Yes", "No…
+$ Hypertension_History    &lt;chr&gt; "No", "No", "No", "No", "No", "No", "Yes", "No…
+$ Cholesterol_Level       &lt;dbl&gt; 186.4002, 185.1367, 210.6966, 211.1655, 223.81…
+$ Physical_Activity       &lt;chr&gt; "Moderate", "Low", "Low", "Moderate", "High", …
+$ Diet_Quality            &lt;chr&gt; "Poor", "Good", "Average", "Good", "Good", "Go…
+$ Alcohol_Consumption     &lt;chr&gt; "Low", "Low", "Moderate", "High", "High", "Hig…
+$ Stress_Levels           &lt;dbl&gt; 3.644786, 3.384056, 3.810911, 6.014878, 6.8068…
+$ BMI                     &lt;dbl&gt; 33.96135, 28.24287, 27.60121, 23.71729, 19.771…
+$ Heart_Rate              &lt;dbl&gt; 72.30153, 57.45764, 64.65870, 55.13147, 76.667…
+$ Systolic_BP             &lt;dbl&gt; 123.90209, 129.89331, 145.65490, 131.78522, 10…
+$ Diastolic_BP            &lt;dbl&gt; 85.68281, 73.52426, 71.99481, 68.21133, 92.902…
+$ Family_History          &lt;chr&gt; "No", "Yes", "No", "No", "No", "No", "No", "No…
+$ Heart_Attack_Occurrence &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No"…
+$ Extra_Column_1          &lt;dbl&gt; 0.40498852, 0.03627815, 0.85297888, 0.39085280…
+$ Extra_Column_2          &lt;dbl&gt; 0.43330004, 0.51256694, 0.21959083, 0.29684675…
+$ Extra_Column_3          &lt;dbl&gt; 0.62871236, 0.66839275, 0.61343656, 0.15572404…
+$ Extra_Column_4          &lt;dbl&gt; 0.70160955, 0.11552874, 0.50800995, 0.87025144…
+$ Extra_Column_5          &lt;dbl&gt; 0.49814235, 0.42381938, 0.90066981, 0.39035591…
+$ Extra_Column_6          &lt;dbl&gt; 0.007901312, 0.083932768, 0.227205241, 0.40318…
+$ Extra_Column_7          &lt;dbl&gt; 0.79458257, 0.68895108, 0.49634358, 0.74140891…
+$ Extra_Column_8          &lt;dbl&gt; 0.29077922, 0.83016364, 0.75210679, 0.22396813…
+$ Extra_Column_9          &lt;dbl&gt; 0.49719307, 0.63449028, 0.18150125, 0.32931387…
+$ Extra_Column_10         &lt;dbl&gt; 0.52199452, 0.30204337, 0.62918031, 0.14319054…
+$ Extra_Column_11         &lt;dbl&gt; 0.79965663, 0.04368285, 0.01827617, 0.90778075…
+$ Extra_Column_12         &lt;dbl&gt; 0.72239788, 0.45166789, 0.06322702, 0.54232201…
+$ Extra_Column_13         &lt;dbl&gt; 0.1487387, 0.8786714, 0.1465122, 0.9224606, 0.…
+$ Extra_Column_14         &lt;dbl&gt; 0.8340099, 0.5356022, 0.9972962, 0.6262165, 0.…
+$ Extra_Column_15         &lt;dbl&gt; 0.061632229, 0.617825340, 0.974455410, 0.22860…</code></pre>
+</div>
+</div>
+<p>Remove extra columns</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>heart_attack <span class="ot">&lt;-</span> heart_attack[, <span class="dv">1</span><span class="sc">:</span><span class="dv">17</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Check for duplicated values and missing values</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for duplicated values</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>heart_attack[<span class="fu">duplicated</span>(heart_attack),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 17
+# ℹ 17 variables: Age &lt;dbl&gt;, Gender &lt;chr&gt;, Region &lt;chr&gt;, Smoking_History &lt;chr&gt;,
+#   Diabetes_History &lt;chr&gt;, Hypertension_History &lt;chr&gt;,
+#   Cholesterol_Level &lt;dbl&gt;, Physical_Activity &lt;chr&gt;, Diet_Quality &lt;chr&gt;,
+#   Alcohol_Consumption &lt;chr&gt;, Stress_Levels &lt;dbl&gt;, BMI &lt;dbl&gt;,
+#   Heart_Rate &lt;dbl&gt;, Systolic_BP &lt;dbl&gt;, Diastolic_BP &lt;dbl&gt;,
+#   Family_History &lt;chr&gt;, Heart_Attack_Occurrence &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(heart_attack))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>4. Exploratory Data Analysis</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>heart_attack<span class="sc">$</span>Heart_Attack_Occurrence <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(heart_attack<span class="sc">$</span>Heart_Attack_Occurrence <span class="sc">==</span> <span class="st">"Yes"</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>heart_attack</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30,000 × 17
+     Age Gender Region Smoking_History Diabetes_History Hypertension_History
+   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt;               
+ 1    56 Male   Urban  Yes             No               No                  
+ 2    69 Male   Urban  No              No               No                  
+ 3    46 Male   Rural  Yes             No               No                  
+ 4    32 Female Urban  No              No               No                  
+ 5    60 Female Rural  No              No               No                  
+ 6    25 Female Rural  No              No               No                  
+ 7    78 Male   Urban  No              Yes              Yes                 
+ 8    38 Female Urban  Yes             No               No                  
+ 9    56 Male   Rural  No              No               Yes                 
+10    75 Male   Urban  No              No               No                  
+# ℹ 29,990 more rows
+# ℹ 11 more variables: Cholesterol_Level &lt;dbl&gt;, Physical_Activity &lt;chr&gt;,
+#   Diet_Quality &lt;chr&gt;, Alcohol_Consumption &lt;chr&gt;, Stress_Levels &lt;dbl&gt;,
+#   BMI &lt;dbl&gt;, Heart_Rate &lt;dbl&gt;, Systolic_BP &lt;dbl&gt;, Diastolic_BP &lt;dbl&gt;,
+#   Family_History &lt;chr&gt;, Heart_Attack_Occurrence &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Heart_Attack_Occurrence <span class="sc">~</span>., <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">'logit'</span>), <span class="at">data =</span> heart_attack)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:  glm(formula = Heart_Attack_Occurrence ~ ., family = binomial(link = "logit"), 
+    data = heart_attack)
+
+Coefficients:
+                (Intercept)                          Age  
+                 -2.2142461                    0.0010545  
+                 GenderMale                  RegionUrban  
+                  0.0721267                   -0.0016410  
+         Smoking_HistoryYes          Diabetes_HistoryYes  
+                  0.0503918                    0.0613686  
+    Hypertension_HistoryYes            Cholesterol_Level  
+                  0.0290893                   -0.0001142  
+       Physical_ActivityLow    Physical_ActivityModerate  
+                 -0.0461076                    0.0383141  
+           Diet_QualityGood             Diet_QualityPoor  
+                  0.0268658                   -0.0370390  
+     Alcohol_ConsumptionLow  Alcohol_ConsumptionModerate  
+                  0.0112375                   -0.0618047  
+    Alcohol_ConsumptionNone                Stress_Levels  
+                  0.0367924                   -0.0206483  
+                        BMI                   Heart_Rate  
+                 -0.0034350                    0.0018603  
+                Systolic_BP                 Diastolic_BP  
+                 -0.0011872                    0.0014894  
+          Family_HistoryYes  
+                 -0.0101681  
+
+Degrees of Freedom: 29999 Total (i.e. Null);  29979 Residual
+Null Deviance:      19350 
+Residual Deviance: 19320    AIC: 19360</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cln_heart_attack <span class="ot">&lt;-</span> <span class="fu">check_collinearity</span>(model)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cln_heart_attack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>check_norm <span class="ot">&lt;-</span> <span class="fu">check_normality</span>(model)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(check_norm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

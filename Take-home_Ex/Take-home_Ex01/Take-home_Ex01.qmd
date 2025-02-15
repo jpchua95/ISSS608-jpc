@@ -9,3 +9,155 @@ execute:
     warning: false
     freeze: true
 ---
+
+# 1. Introduction
+
+# 2. Getting Started
+
+(intro and significance of data)
+
+## 2.1 Loading the relevant libraries
+
+The following R packages will be used:
+
+-   `tidyverse`:
+
+-   `performance`:
+
+```{r}
+pacman::p_load(tidyverse, performance, plotly)
+```
+
+## 2.2 Data source and importing data
+
+In this assignment, the "Heart Attack in Japan Youth Vs Adult" data will be used. The dataset is retrieved from [Kaggle](https://www.kaggle.com/datasets/ashaychoudhary/heart-attack-in-japan-youth-vs-adult?resource=download).
+
+We import the dataset, `japan_heart_attack_dataset.csv`, using `read_csv()` of *readr* package into R.
+
+```{r}
+heart_attack <- read_csv("data/japan_heart_attack_dataset.csv")
+```
+
+# 3. Data Pre-Processing
+
+View data
+
+```{r}
+glimpse(heart_attack)
+```
+
+Remove extra columns
+
+```{r}
+heart_attack <- heart_attack[, 1:17]
+```
+
+Check for duplicated values and missing values
+
+```{r}
+# Check for duplicated values
+heart_attack[duplicated(heart_attack),]
+
+# Check for missing values
+any(is.na(heart_attack))
+```
+
+# 4. Exploratory Data Analysis
+
+```{r}
+heart_attack$Heart_Attack_Occurrence <- ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+
+heart_attack
+```
+
+```{r}
+model <- glm(Heart_Attack_Occurrence ~., family = binomial(link = 'logit'), data = heart_attack)
+model
+```
+
+```{r}
+cln_heart_attack <- check_collinearity(model)
+plot(cln_heart_attack)
+```
+
+```{r}
+check_norm <- check_normality(model)
+plot(check_norm)
+```
+
+```{r}
+p1 <- ggplot(data = heart_attack, 
+             aes(x= BMI, 
+                 y= Cholesterol_Level)) +
+  geom_point() +
+  geom_smooth(method = lm, 
+              linewidth = 0.5) +  
+
+  ggtitle("Cholesterol Level vs Stress Levels")
+
+p1
+```
+
+```{r}
+bp <- heart_attack %>%
+  plot_ly(x = ~Stress_Levels, 
+          y = ~Cholesterol_Level, 
+          size = ~BMI, 
+          color = ~Physical_Activity,
+          sizes = c(2, 100),
+          frame = ~Age, 
+          text = ~Physical_Activity, 
+          hoverinfo = "text",
+          type = 'scatter',
+          mode = 'markers'
+          ) %>%
+  layout(showlegend = FALSE)
+bp
+```
+
+```{r}
+ggplot(data=heart_attack, 
+       aes(x = Stress_Levels)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(data=heart_attack, 
+       aes(y = BMI,       
+           x = Heart_Attack_Occurrence)) +    
+  geom_boxplot()  
+```
+
+```{r}
+ggplot(data = heart_attack, 
+       aes(x = Cholesterol_Level, 
+           y = Age)) +
+  geom_point()  
+```
+
+```{r}
+ggplot(data = heart_attack, 
+       aes(y = Cholesterol_Level, x = Gender)) +
+    geom_boxplot()
+```
+
+```{r}
+ggplot(data = heart_attack, 
+       aes(x = Age)) +
+  geom_histogram(bins=20) +
+    facet_wrap(~ Heart_Attack_Occurrence)
+```
+
+```{r}
+ggplot(data = heart_attack, 
+       aes(x = BMI, fill = Gender)) +
+  geom_histogram(bins=20) +
+    facet_wrap(~ Heart_Attack_Occurrence)
+```
+
+```{r}
+ggplot(data = heart_attack, 
+       aes(x = Age, y = Stress_Levels)) +
+  geom_violin() +
+    facet_wrap(~ BMI)
+```

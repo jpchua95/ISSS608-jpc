@@ -1,0 +1,220 @@
+---
+title: "In class Ex05: Visual Analytics for BUilding Better Explanatory Models"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+```{r}
+pacman::p_load(tidyverse, readxl, SmartEDA, easystats, gtsummary, ggstatsplot)
+```
+
+# 2. Importing Data
+
+```{r}
+car_resale <- read_xls("data/ToyotaCorolla.xls","data")
+```
+
+Second argument `"data"` indicates the spreadsheet to retrieve the data from.
+
+# 3. Data Overview
+
+```{r}
+glimpse(car_resale)
+```
+
+`glimpse()` is a dplyr function. Similar to `summary()`.
+
+```{r}
+summary(car_resale)
+```
+
+```{r}
+list(car_resale)
+```
+
+```{r}
+list(car_resale)
+```
+
+```{r}
+car_resale %>% 
+    ExpData(type = 1)
+```
+
+```{r}
+#| eval: FALSE
+# Saving as a summary table
+summary_car_resale <- car_resale %>% 
+    ExpData(type = 1)
+```
+
+`ExpData()` of [SmartEDA](https://cran.r-project.org/web/packages/SmartEDA/vignettes/SmartEDA.html) has type 1 and type 2.
+
+-   `type = 1`: provides an overview of the data
+
+-   `type = 2`: breaks down and organise by variable
+
+```{r}
+car_resale %>% 
+    ExpData(type = 2)
+```
+
+```{r}
+cols <- c("Mfg_Month", "HP_Bin", "CC_bin", "Doors", "Gears", "Cylinders", "Fuel_Type", "Color", "Met_Color", "Automatic", "Mfr_Guarantee", "BOVAG_Guarantee", "ABS", "Airbag_1", "Airbag_2", "Airco", "Automatic_airco", "Boardcomputer", "CD_Player", "Central_Lock", "Powered_Windows", "Power_Steering", "Radio", "Mistlamps", "Sport_Model", "Backseat_Divider", "Metallic_Rim", "Radio_cassette", "Tow_Bar"
+)
+```
+
+```{r}
+car_resale <- read_xls("data/ToyotaCorolla.xls", sheet = "data") %>%
+    mutate(Id = as.character(Id)) %>%
+    mutate_each_(funs(factor(.)), cols)
+```
+
+Re-running `ExpData()`, \# of numeric variables reduced to 7 and \# of factor variables increased to 29.
+
+```{r}
+car_resale %>% 
+    ExpData(type = 1)
+```
+
+```{r}
+car_resale %>%
+    ExpNumViz(target = NULL,
+              nlim = 10,
+              Page = c(2,2))
+```
+
+```{r}
+car_resale %>% 
+    ExpNumViz(target = "Price",
+              nlim = 10,
+              Page = c(2,2))
+```
+
+-   `c(2,2)`: provides 2x2 plots in a page
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+car_resale %>% 
+    ExpCatViz(target = NULL,
+              col = "sky blue",
+              clim = 10,
+              margin = 2,
+              Page = c(4,4),
+              sample = 16)
+```
+
+-   Automatically renders as bar charts for categorical variables
+
+-   `fig-width` default is 8 for HTML page
+
+-   By setting `fig-width` and `fig-height`, the figures will be more visible on the page, instead of squeezing together
+
+# 4. Building Multi-Regression Model
+
+```{r}
+model <- lm(Price ~ Age_08_04 + Mfg_Year + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+model
+```
+
+```{r}
+check_collinearity(model)
+```
+
+-   `check_collinearity()` provides the VIFs in a summary table
+
+-   Collinearity of 1-5: low
+
+-   Collinearity of 5-10: signs of collinearity
+
+-   Collinearity of above 10: very high collinearity
+
+```{r}
+check_c <- check_collinearity(model)
+plot(check_c)
+```
+
+```{r}
+model1 <- lm(Price ~ Age_08_04 + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+model1
+check_normality(model1)
+```
+
+-   After calibrating the model, conduct diagnostic tests
+
+-   One of the tests is normality test
+
+-   If model conforms to normality, the normality plot will converge to along the line
+
+    -   If deviations are observed, the model does not conform to normality
+
+```{r}
+check_heteroscedasticity(model1)
+```
+
+-   Observe data if they cluster in the heteroscedasticity plot - if there are 2 (or more) clusters, might be better to build a separate model
+
+`ggcorrmat` will cross out the insignificant variables and also show variables by collinearity with various intensity
+
+-   Plot the computed correlation matrix using `corrplot`
+
+    -   `wine.cor <- cor(wine[, 1:11])`
+
+    -   `corrplot(wine.cor)`
+
+```{r}
+summary(model1)
+```
+
+```{r}
+tbl_regression(model1, intercept = TRUE)
+```
+
+-   `tbl_regression` is designed specially for regression model
+
+    -   similar to `summary()`
+
+-   Organise the summary into a data table
+
+```{r}
+tbl_regression(model1, intercept = TRUE) %>% 
+    add_glance_source_note(
+        label = list(sigma ~ "\U03C3"),
+        include = c(r.squared, adj.r.squared,
+                    AIC, statistic,
+                    p.value, sigma)
+    )
+```
+
+-   `sigma ~ "\U03C3"`: extract sigma value from model 1
+
+    -   Fixed code
+
+```{r}
+p_model1 <- parameters(model1)
+# Saving into a data table
+```
+
+```{r}
+plot(parameters(model1))
+```
+
+-   The standard error on the plot shows which variable(s) has more uncertainty
+
+```{r}
+ggcoefstats(model1, output = "plot")
+```
+
+-   This provides more statistical results
+
+-   Improved version of `parameters()` and there's no need to reference the table since necessary information are all plotted on the chart

@@ -1,5 +1,5 @@
 ---
-title: "In-class_Ex04"
+title: "In class Ex04"
 author: "Jia Peng Chua"
 date-modified: "last-modified"
 execute:
@@ -53,7 +53,7 @@ ggplot(exam_data,
   geom_density_ridges()
 ```
 
-#  3. Additional Notes
+# 3. Additional Notes
 
 ```{r}
 ggplot(exam_data, 

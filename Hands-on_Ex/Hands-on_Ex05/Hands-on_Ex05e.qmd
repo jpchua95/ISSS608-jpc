@@ -378,3 +378,23 @@ Then, `d3tree()` is used to build an interactive treemap.
 ```{r}
 d3tree(tm,rootname = "Singapore" )
 ```
+
+# 6. Additional Notes
+
+-   At least 2 categorical data
+
+<!-- -->
+
+-   Can only accommodate 2 continuous variables - must be able to organise hierarchically
+
+    -   Organise by colour and size - NOT categorical data!
+
+    -   If there are negative and positive values - use colour to differentiate since colours can be divergent
+
+    -   Cannot use size to represent negative values
+
+[^1]
+
+[^1]: This document was completed with reference to:
+
+    -   Prof Kam's notes "16 Treemap Visualisation with R": <https://r4va.netlify.app/chap16>

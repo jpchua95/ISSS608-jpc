@@ -41,9 +41,9 @@ website:
           href: Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05e.html
       - text: "In-Class Exercise"
         menu:
-        - text: "In-Class Exercise 1"
+        - text: "In-Class Exercise 1 (Sales & Profit Report)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex01_17371865820910/Dashboard1
-        - text: "In-Class Exercise 2"
+        - text: "In-Class Exercise 2 (Interactive Report Dashboard)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex02_17377903625070/Dashboard1
         - text: "In-Class Exercise 3 (Interactive Dashboard)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-1_17383926050260/DashboardbyYearState
@@ -51,11 +51,13 @@ website:
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-2_17383925206230/SalesvsProfitbyMonthandYear
         - text: "In-Class Exercise 3 (Story)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex03-3_17383934113260/Story
-        - text: "In-Class Exercise 4"
+        - text: "In-Class Exercise 4 (Box Plot)"
           href: In-class_Ex/In-class_Ex04/In-class_Ex04.html
+        - text: "In-Class Exercise 5 (Regression Model)"
+          href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
       - text: "Take-Home Exercise"
         menu:
-        - text: "Take-home Exercise 1"
+        - text: "Take-home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
 
 format:
