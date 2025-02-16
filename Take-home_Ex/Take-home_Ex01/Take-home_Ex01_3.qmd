@@ -1,0 +1,117 @@
+---
+title: "Take-home_Ex01_3 DRAFT 3"
+---
+
+```{r}
+pacman::p_load(tidyverse, performance, plotly,
+               SmartEDA, easystats, gtsummary, ggstatsplot)
+```
+
+```{r}
+heart_attack <- read_csv("data/japan_heart_attack_dataset.csv")
+```
+
+```{r}
+heart_attack$Heart_Attack_Occurrence <- ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+
+heart_attack
+```
+
+```{r}
+heart_attack <- heart_attack[, 1:17]
+```
+
+```{r}
+urban_data <- heart_attack %>% filter(Region == "Urban")
+rural_data <- heart_attack %>% filter(Region == "Rural")
+```
+
+```{r}
+model_urban <- glm(Heart_Attack_Occurrence ~ Age + Cholesterol_Level + Stress_Levels + 
+                       BMI + Heart_Rate + Diastolic_BP + Systolic_BP, data = urban_data)
+model_urban
+```
+
+```{r}
+model_rural <- lm(Heart_Attack_Occurrence ~ Age + Cholesterol_Level + Stress_Levels + BMI + 
+            Heart_Rate + Diastolic_BP + Systolic_BP, data = rural_data)
+model_rural
+```
+
+```{r}
+check_collinearity(model_rural)
+```
+
+```{r}
+check_collinearity(model_urban)
+```
+
+```{r}
+ggcoefstats(model_urban, 
+            output = "plot")
+```
+
+```{r}
+ggcoefstats(model_rural, 
+            output = "plot")
+```
+
+```{r}
+model_urban_cat <- glm(Heart_Attack_Occurrence ~ Gender + Region + Smoking_History + Diabetes_History + Hypertension_History + Physical_Activity + Diet_Quality + Alcohol_Consumption + Family_History, data = heart_attack)
+model_urban_cat
+```
+
+```{r}
+model_rural_cat <- glm(Heart_Attack_Occurrence ~ Gender + Region + Smoking_History + Diabetes_History + Hypertension_History + Physical_Activity + Diet_Quality + Alcohol_Consumption + Family_History, data = heart_attack)
+model_rural_cat
+```
+
+```{r}
+ggcoefstats(model_urban_cat, 
+            output = "plot")
+```
+
+```{r}
+ggcoefstats(model_rural_cat, 
+            output = "plot")
+```
+
+```{r}
+model_rural_significant <- glm(Heart_Attack_Occurrence ~ Cholesterol_Level + Stress_Levels, data = rural_data)
+model_rural_significant
+```
+
+```{r}
+check_norm_1 <- check_normality(model_rural_significant)
+plot(check_norm_1)
+```
+
+```{r}
+cols <- c("Age", "Gender", "Region", "Smoking_History", "Diabetes_History", "Hypertension_History", "Cholesterol_Level", "Physical_Activity", "Diet_Quality", "Alcohol_Consumption", "Stress_Levels", "BMI", "Heart_Rate", "Systolic_BP", "Diastolic_BP", "Family_History")
+```
+
+```{r}
+heart_attack <- read_csv("data/japan_heart_attack_dataset.csv") %>%
+    mutate_each_(funs(factor(.)), cols)
+
+heart_attack$Heart_Attack_Occurrence <- ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+heart_attack <- heart_attack[, 1:17]
+```
+
+```{r}
+model_rural <- lm(Heart_Attack_Occurrence ~ Age + Cholesterol_Level + Stress_Levels + BMI + 
+            Heart_Rate + Diastolic_BP + Systolic_BP, data = rural_data)
+model_rural
+```
+
+```{r}
+rural_data %>% 
+    ExpData(type = 1)
+```
+
+```{r}
+rural_data %>%
+    ExpNumViz(target = "Heart_Attack_Occurrence",
+              nlim = 10,
+              Page = c(2,2))
+```

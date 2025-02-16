@@ -12,25 +12,47 @@ execute:
 
 # 1. Introduction
 
-# 2. Getting Started
+Heart diseases, including heart attacks, have been the leading cause of death globally. Understanding the risk factors and trends associated with heart attacks is crucial for prevention strategies and health interventions.
 
-(intro and significance of data)
+This study analyses the heart attack data in Japan among youth and adult, using data visualisations and statistical insights to uncover key insights.
+
+By examining risk factors such as lifestyles choices, age, medical conditions and family history, we aim to identify valuable insights that contribute to heart health awareness and prevention efforts.
+
+# 2. Getting Started
 
 ## 2.1 Loading the relevant libraries
 
 The following R packages will be used:
 
--   `tidyverse`:
+-   `tidyverse`: Used for data manipulation, visualisation and analysis
 
--   `performance`:
+-   `performance`: Used to compare and visualise statistical models' performance metrics
+
+-   `plotly`: Enables interactive and dynamic visualisations
+
+-   `SmartEDA`: Generate summary statistics
+
+-   `easystats`: Used for statistical analysis, which includes model fitting and visualisation
+
+-   `gtsummary`: Creates summary tables for easy interpretation
+
+-   `ggstatsplot`: An extention of `ggplot2` with statistical visualisation
+
+-   `ggridges`: Creates ridge plots to visualise distributions of data
+
+-   `ggcorrplot`: For visualising correlation matrices with heatmaps
+
+-   `ggpubr`: An extention of `ggplot2` to create visualisation
 
 ```{r}
-pacman::p_load(tidyverse, performance, plotly)
+pacman::p_load(tidyverse, performance, plotly,
+               SmartEDA, easystats, gtsummary, ggstatsplot, 
+               ggridges, ggdist, ggcorrplot, ggpubr)
 ```
 
 ## 2.2 Data source and importing data
 
-In this assignment, the "Heart Attack in Japan Youth Vs Adult" data will be used. The dataset is retrieved from [Kaggle](https://www.kaggle.com/datasets/ashaychoudhary/heart-attack-in-japan-youth-vs-adult?resource=download).
+In this study, the "Heart Attack in Japan Youth Vs Adult" data will be used. The dataset is retrieved from [Kaggle](https://www.kaggle.com/datasets/ashaychoudhary/heart-attack-in-japan-youth-vs-adult?resource=download).
 
 We import the dataset, `japan_heart_attack_dataset.csv`, using `read_csv()` of *readr* package into R.
 
@@ -40,19 +62,19 @@ heart_attack <- read_csv("data/japan_heart_attack_dataset.csv")
 
 # 3. Data Pre-Processing
 
-View data
+First, we get a summary and overview of the dataset.
 
 ```{r}
-glimpse(heart_attack)
+summary(heart_attack)
 ```
 
-Remove extra columns
+We exclude the extra columns provided in the dataset, that are not needed for this analysis.
 
 ```{r}
 heart_attack <- heart_attack[, 1:17]
 ```
 
-Check for duplicated values and missing values
+Next, we check for duplicated values and missing values. There are no duplicated and missing values.
 
 ```{r}
 # Check for duplicated values
@@ -62,102 +84,476 @@ heart_attack[duplicated(heart_attack),]
 any(is.na(heart_attack))
 ```
 
-# 4. Exploratory Data Analysis
+For the analysis, we encode the `Heart_Attack_Occurrence` variable as 1 for "Yes", and 0 for "No".
 
 ```{r}
-heart_attack$Heart_Attack_Occurrence <- ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+heart_attack$Heart_Attack_Occurrence <- 
+    ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+```
 
+```{r}
+heart_attack$Smoking_History <- 
+    ifelse(heart_attack$Smoking_History == "Yes",1,0)
+heart_attack$Diabetes_History <- 
+    ifelse(heart_attack$Diabetes_History == "Yes",1,0)
+heart_attack$Hypertension_History <- 
+    ifelse(heart_attack$Hypertension_History == "Yes",1,0)
+heart_attack$Family_History_num <- 
+    ifelse(heart_attack$Family_History == "Yes",1,0)
 heart_attack
 ```
 
+::: panel-tabset
+#### Age Group
+
 ```{r}
-model <- glm(Heart_Attack_Occurrence ~., family = binomial(link = 'logit'), data = heart_attack)
-model
+#| echo: FALSE
+heart_attack$Age_Group <- cut(heart_attack$Age, 
+                              breaks = c(0, 25, 35, 45, 55, 65, 75, Inf), 
+                              labels = c("Below 25", "25-34", "35-44", 
+                                         "45-54", "55-64", "65-74", "75+"), 
+                              right = FALSE)
+table(heart_attack$Age_Group)
 ```
 
+#### The Code
+
 ```{r}
-cln_heart_attack <- check_collinearity(model)
-plot(cln_heart_attack)
+#| eval: FALSE
+heart_attack$Age_Group <- cut(heart_attack$Age, 
+                              breaks = c(0, 25, 35, 45, 55, 65, 75, Inf), 
+                              labels = c("Below 25", "25-34", "35-44", 
+                                         "45-54", "55-64", "65-74", "75+"), 
+                              right = FALSE)
+```
+:::
+
+Let's take another look at the dataset summary.
+
+::: panel-tabset
+#### Descriptions
+
+```{r}
+#| echo: FALSE
+
+heart_attack %>% 
+    ExpData(type = 1)
+
+heart_attack %>% 
+    ExpData(type = 2)
 ```
 
+#### The Code
+
 ```{r}
-check_norm <- check_normality(model)
-plot(check_norm)
+#| eval: FALSE
+
+heart_attack %>% 
+    ExpData(type = 1)
+
+heart_attack %>% 
+    ExpData(type = 2)
+```
+:::
+
+# 4. Exploratory Data Analysis
+
+## 4.1. Distribution of Heart Rate by Age Group
+
+Histograms of the heart rates across age groups is created to visualise the distribution of heart rates.
+
+Firstly, the `filter()` function is used to create subsets of datasets by the `Heart_Attack_Occurrence`.
+
+Then, `ggplot()` and `geom_histogram()` is used to create histogram.
+
+Lastly, `facet_wrap()` is used to create multiple faceted plots. Each data subset is split into multiple panels by age groups.
+
+```{r}
+heart_attack_1 <- heart_attack %>% filter(Heart_Attack_Occurrence == 1)
+heart_attack_0 <- heart_attack %>% filter(Heart_Attack_Occurrence == 0)
 ```
 
-```{r}
-p1 <- ggplot(data = heart_attack, 
-             aes(x= BMI, 
-                 y= Cholesterol_Level)) +
-  geom_point() +
-  geom_smooth(method = lm, 
-              linewidth = 0.5) +  
-
-  ggtitle("Cholesterol Level vs Stress Levels")
-
-p1
-```
+::: panel-tabset
+#### Heart Rate of Heart Attack Patients
 
 ```{r}
-bp <- heart_attack %>%
-  plot_ly(x = ~Stress_Levels, 
-          y = ~Cholesterol_Level, 
-          size = ~BMI, 
-          color = ~Physical_Activity,
-          sizes = c(2, 100),
-          frame = ~Age, 
-          text = ~Physical_Activity, 
-          hoverinfo = "text",
-          type = 'scatter',
-          mode = 'markers'
-          ) %>%
-  layout(showlegend = FALSE)
-bp
-```
-
-```{r}
-ggplot(data=heart_attack, 
-       aes(x = Stress_Levels)) +
-  geom_histogram()
-```
-
-```{r}
-ggplot(data=heart_attack, 
-       aes(y = BMI,       
-           x = Heart_Attack_Occurrence)) +    
-  geom_boxplot()  
-```
-
-```{r}
-ggplot(data = heart_attack, 
-       aes(x = Cholesterol_Level, 
-           y = Age)) +
-  geom_point()  
-```
-
-```{r}
-ggplot(data = heart_attack, 
-       aes(y = Cholesterol_Level, x = Gender)) +
-    geom_boxplot()
-```
-
-```{r}
-ggplot(data = heart_attack, 
-       aes(x = Age)) +
+#| echo: FALSE
+ggplot(data = heart_attack_1, 
+       aes(x = Heart_Rate, fill = Family_History)) +
   geom_histogram(bins=20) +
-    facet_wrap(~ Heart_Attack_Occurrence)
+    facet_wrap(~ Age_Group)
 ```
 
+#### The Code
+
 ```{r}
-ggplot(data = heart_attack, 
-       aes(x = BMI, fill = Gender)) +
+#| eval: FALSE
+ggplot(data = heart_attack_1, 
+       aes(x = Heart_Rate, fill = Family_History)) +
   geom_histogram(bins=20) +
-    facet_wrap(~ Heart_Attack_Occurrence)
+    facet_wrap(~ Age_Group)
+```
+:::
+
+::: panel-tabset
+#### Heart Rate of Non Heart Attack Patients
+
+```{r}
+#| echo: FALSE
+ggplot(data = heart_attack_0, 
+       aes(x = Heart_Rate, fill = Family_History)) +
+  geom_histogram(bins=20) +
+    facet_wrap(~ Age_Group)
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+ggplot(data = heart_attack_0, 
+       aes(x = Heart_Rate, fill = Family_History)) +
+  geom_histogram(bins=20) +
+    facet_wrap(~ Age_Group)
+```
+:::
+
+### Observations
+
+Based on the plot above, the heart rates of non-heart attack patients remain consistent across all age groups, peaking at around 70 and following a normal distribution.
+
+There is a larger proportion of heart attack patients do not have a family history of the condition.
+
+In most age groups, the heart rates of heart attack patients also follow a normal distribution, with the peak ranging between 60 and 80. The heart rates among patients with family history tend to be more widely distributed in general.
+
+In the 75+ age group, the distribution is more skewed toward higher heart rates, indicating an increased heart rate in older adults experiencing heart attacks.
+
+## 4.2. Distribution of Stress Levels by Age Group
+
+A ridgeline plot is created to visualise the distributions of stress levels across all age groups for heart attack and non-heart attack patients.
+
+`ggplot()` and `stat_density_ridges()` are used to create the ridgeline plot, showing the quantile lines.
+
+2 separate ridgeline plots are created, for the heart attack and non-heart attack group respective. The plots are joined in a single visualisation by simply adding them together, i.e. `p1 + p2`.
+
+::: panel-tabset
+## Distribution
+
+```{r}
+#| echo: FALSE
+p1 <- ggplot(heart_attack_1,
+       aes(x = Stress_Levels,
+           y = Age_Group,
+           fill = factor(stat(quantile)))) +
+    stat_density_ridges(geom = "density_ridges_gradient",
+                        calc_ecdf = TRUE,
+                        quantile_lines = TRUE,
+                        quantiles = 4) +
+    scale_fill_viridis_d(alpha = 0.8) +
+    xlab("Stress Level") + ylab("Age Group") +
+    scale_x_continuous(breaks = seq(0, 12, by = 2)) +
+    theme(plot.title = element_text(size = 10),
+          legend.position = "none")+
+    ggtitle(label = "Distribution of Stress Levels\nof Heart Attack Patients\nby Age Group")
 ```
 
 ```{r}
-ggplot(data = heart_attack, 
-       aes(x = Age, y = Stress_Levels)) +
-  geom_violin() +
-    facet_wrap(~ BMI)
+#| echo: FALSE
+p2 <- ggplot(heart_attack_0,
+       aes(x = Stress_Levels,
+           y = Age_Group,
+           fill = factor(stat(quantile)))) +
+    stat_density_ridges(geom = "density_ridges_gradient",
+                        calc_ecdf = TRUE,
+                        quantile_lines = TRUE,
+                        quantiles = 4) +
+    scale_fill_viridis_d(alpha = 0.8) +
+    xlab("Stress Level") +
+    scale_x_continuous(breaks = seq(0, 12, by = 2)) +
+    theme(plot.title = element_text(size = 10),
+          legend.position = "none",
+          axis.title.y = element_blank())+
+    ggtitle(label = "Distribution of Stress Levels\nof Non-Heart Attack Patients\nby Age Group")
+```
+
+```{r}
+#| echo: FALSE
+p1 + p2
+```
+
+## The Code
+
+```{r}
+#| eval: FALSE
+p1 <- ggplot(heart_attack_1,
+       aes(x = Stress_Levels,
+           y = Age_Group,
+           fill = factor(stat(quantile)))) +
+    stat_density_ridges(geom = "density_ridges_gradient",
+                        calc_ecdf = TRUE,
+                        quantile_lines = TRUE,
+                        quantiles = 4) +
+    scale_fill_viridis_d(alpha = 0.8) +
+    xlab("Stress Level") + ylab("Age Group") +
+    scale_x_continuous(breaks = seq(0, 12, by = 2)) +
+    theme(plot.title = element_text(size = 10),
+          legend.position = "none")+
+    ggtitle(label = "Distribution of Stress Levels\nof Heart Attack Patients\nby Age Group")
+```
+
+```{r}
+#| eval: FALSE
+p2 <- ggplot(heart_attack_0,
+       aes(x = Stress_Levels,
+           y = Age_Group,
+           fill = factor(stat(quantile)))) +
+    stat_density_ridges(geom = "density_ridges_gradient",
+                        calc_ecdf = TRUE,
+                        quantile_lines = TRUE,
+                        quantiles = 4) +
+    scale_fill_viridis_d(alpha = 0.8) +
+    xlab("Stress Level") +
+    scale_x_continuous(breaks = seq(0, 12, by = 2)) +
+    theme(plot.title = element_text(size = 10),
+          legend.position = "none",
+          axis.title.y = element_blank())+
+    ggtitle(label = "Distribution of Stress Levels\nof Non-Heart Attack Patients\nby Age Group")
+```
+
+```{r}
+#| eval: FALSE
+p1 + p2
+```
+:::
+
+### Observations
+
+Based on the plot, we can see that the stress levels for both heart attack and non-heart attack patients follow a normal distribution across all age groups.
+
+The distribution of stress levels for heart attack patients suggest that they generally experience higher stress levels on average compared to non-heart attack patients. Patients in the age group of 35-44, 45-54 and 65-74 have higher stress levels, with peaks between 5 and 6 as indicated by the quantile lines.
+
+Further research in this area could explore the underlying source of stress, such as occupational, economic or social pressures, and how these factors contribute to risks of heart attack.
+
+## 4.3. Check for Correlation
+
+We check the correlation among all continuous variables. First, we select the numeric variables from the `heart_attack` dataset using `select(where(is.numeric))`. Next, we use the `cor()` function to create the correlation matrix. Then, we use `ggcorrplot()` to visualise the correlation matrix in a heatmap.
+
+```{r}
+heart_attack_cor <- heart_attack %>% 
+    select(where(is.numeric)) 
+```
+
+```{r}
+heart_attack_cormatrix <- cor(heart_attack_cor, use = "complete.obs")
+```
+
+::: panel-tabset
+#### The Heatmap
+
+```{r}
+#| echo: FALSE
+ggcorrplot(heart_attack_cormatrix,
+           method = "square",
+           lab = TRUE,
+           title = "Correlation Heatmap",
+           hc.order = TRUE,
+           colors = c("#6D9EC1", "white", "#E46726")) + 
+    theme(axis.text.y = element_text(size = 8),
+          axis.text.x = element_text(size = 8))
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+ggcorrplot(heart_attack_cormatrix,
+           method = "square",
+           lab = TRUE,
+           title = "Correlation Heatmap",
+           hc.order = TRUE,
+           colors = c("#6D9EC1", "white", "#E46726")) + 
+    theme(axis.text.y = element_text(size = 8),
+          axis.text.x = element_text(size = 8))
+```
+:::
+
+### Observations
+
+We observe low correlation between all the variables, as the correlation coefficient between any 2 variables are close to 0. This suggests that there is little to no linear relationship between them.
+
+The variables may act independently in contributing to the heart attack occurrence, and multiple factors could be at play without one directly influencing another in a linear fashion.
+
+## 4.4 Significant Factors that Affects Heart Attack
+
+We want to examine the factors that influence heart attacks based on region. In the dataset, the `Region` variable contains of 2 values: Urban and Rural.
+
+First, we create subsets of the `heart_attack` dataset by region, using the `filter()` function.
+
+Next, we fit the variables into a logistic regression model using `glm()`, as some variables are categorical.
+
+Then, we check for collinearity using the `check_collinearity()` function.
+
+Lastly, we use `ggcoefstats()` to visualise the model coefficients from the regression analysis and identify factors influencing heart attack occurrence in each region.
+
+```{r}
+heart_attack_urban <- heart_attack %>% filter(Region == "Urban")
+heart_attack_rural <- heart_attack %>% filter(Region == "Rural")
+```
+
+### Urban Region
+
+::: panel-tabset
+#### Model Summary
+
+```{r}
+#| echo: FALSE
+model_urban <- glm(Heart_Attack_Occurrence ~ Age + Smoking_History +
+                       Diabetes_History + Hypertension_History + 
+                       Cholesterol_Level + Stress_Levels + BMI + 
+                       Heart_Rate + Systolic_BP + Diastolic_BP + Family_History,
+                   data = heart_attack_urban)
+model_urban
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+model_urban <- glm(Heart_Attack_Occurrence ~ Age + Smoking_History +
+                       Diabetes_History + Hypertension_History + 
+                       Cholesterol_Level + Stress_Levels + BMI + 
+                       Heart_Rate + Systolic_BP + Diastolic_BP + Family_History,
+                   data = heart_attack_urban)
+
+```
+:::
+
+::: panel-tabset
+#### Collinearity Results
+
+```{r}
+#| echo: FALSE
+check_collinearity(model_urban)
+```
+
+The VIF values for all variables are low, indicating that the variables have no strong intercorrelation.
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+check_collinearity(model_urban)
+```
+:::
+
+::: panel-tabset
+#### The Model
+
+```{r}
+#| echo: FALSE
+ggcoefstats(model_urban, 
+            output = "plot")
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+ggcoefstats(model_urban, 
+            output = "plot")
+```
+:::
+
+### Rural Region
+
+::: panel-tabset
+#### Model Summary
+
+```{r}
+#| echo: FALSE
+model_rural <- glm(Heart_Attack_Occurrence ~ Age + Smoking_History + 
+                       Diabetes_History + Hypertension_History + 
+                       Cholesterol_Level + Stress_Levels + BMI + 
+                       Heart_Rate + Systolic_BP + Diastolic_BP + Family_History,
+                   data = heart_attack_rural)
+model_rural
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+model_rural <- glm(Heart_Attack_Occurrence ~ Age + Smoking_History + 
+                       Diabetes_History + Hypertension_History + 
+                       Cholesterol_Level + Stress_Levels + BMI + 
+                       Heart_Rate + Systolic_BP + Diastolic_BP + Family_History,
+                   data = heart_attack_rural)
+```
+:::
+
+::: panel-tabset
+#### Collinearity Results
+
+```{r}
+#| echo: FALSE
+check_collinearity(model_rural)
+```
+
+The VIF values for all variables are low, indicating that the variables have no strong intercorrelation.
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+check_collinearity(model_rural)
+```
+:::
+
+::: panel-tabset
+#### The Model
+
+```{r}
+#| echo: FALSE
+ggcoefstats(model_rural, 
+            output = "plot")
+```
+
+#### The Code
+
+```{r}
+#| eval: FALSE
+ggcoefstats(model_rural, 
+            output = "plot")
+
+```
+:::
+
+### Observations
+
+In the rural subset, the significant predictors of heart attack occurrence at 10% level of significance are:
+
+-   Family history
+
+-   Diabetes history
+
+-   Hypertension history
+
+-   Cholesterol history
+
+-   Stress levels
+
+In rural areas, family history seems to have significant influence on the heart attack occurrence. Additionally, chronic conditions like diabetes and hypertension are key contributors to heart attack risk. Cholesterol level indicates that dietary habits in rural areas may be a contributing risk factor. Lastly, stress levels that potentially arising from psychological and social pressures may also play a role.
+
+In urban areas, age is the only variable significantly associated with heart attack occurrence at 10% level of significance. This suggests that in the urban population, age has a stronger influence on heart attack occurrence than other factors, based on the logistic regression analysis.
+
+Finally, we build a model using only the significant factors from the rural subset, applying the logistic regression model with the `glm()` function.
+
+```{r}
+model_rural_significant <- glm(Heart_Attack_Occurrence ~ Family_History + Diabetes_History + 
+                       Hypertension_History + Cholesterol_Level + Stress_Levels,
+                   data = heart_attack_rural)
+model_rural_significant
+```
+
+```{r}
+tbl_regression(model_rural_significant, intercept = TRUE)
 ```

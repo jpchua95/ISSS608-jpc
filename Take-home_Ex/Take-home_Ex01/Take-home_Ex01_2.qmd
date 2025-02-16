@@ -1,0 +1,71 @@
+---
+title: "Take-home_Ex01_2 DRAFT 2"
+---
+
+\
+
+```{r}
+pacman::p_load(tidyverse, performance, plotly,
+               SmartEDA, easystats, gtsummary, ggstatsplot)
+```
+
+```{r}
+heart_attack <- read_csv("data/japan_heart_attack_dataset.csv")
+```
+
+```{r}
+heart_attack$Heart_Attack_Occurrence <- ifelse(heart_attack$Heart_Attack_Occurrence == "Yes",1,0)
+
+heart_attack
+```
+
+```{r}
+heart_attack$Smoking_History <- ifelse(heart_attack$Smoking_History == "Yes",1,0)
+
+```
+
+```{r}
+heart_attack$Diabetes_History <- ifelse(heart_attack$Diabetes_History == "Yes",1,0)
+heart_attack$Hypertension_History <- ifelse(heart_attack$Hypertension_History == "Yes",1,0)
+```
+
+```{r}
+heart_attack <- heart_attack[, 1:17]
+```
+
+```{r}
+summary(heart_attack)
+```
+
+```{r}
+model <- glm(Heart_Attack_Occurrence ~ Age + Cholesterol_Level + Stress_Levels + BMI + 
+            Heart_Rate + Diastolic_BP + Systolic_BP, data = heart_attack)
+model
+```
+
+```{r}
+check_collinearity(model)
+```
+
+```{r}
+check_norm <- check_normality(model)
+```
+
+```{r}
+ggcoefstats(model, 
+            output = "plot")
+```
+
+```{r}
+model_cat <- glm(Heart_Attack_Occurrence ~ Gender + Region + Smoking_History + Diabetes_History + Hypertension_History + Physical_Activity + Diet_Quality + Alcohol_Consumption + Family_History, data = heart_attack)
+model_cat
+```
+
+```{r}
+check_norm <- check_normality(model_cat)
+```
+
+```{r}
+ggcoefstats(model_cat, 
+            output = "plot")
+```
