@@ -382,7 +382,7 @@ We observe low correlation between all the variables, as the correlation coeffic
 
 The variables may act independently in contributing to the heart attack occurrence, and multiple factors could be at play without one directly influencing another in a linear fashion.
 
-## 4.4 Significant Factors that Affects Heart Attack
+## 4.4 Significant Factors that Affect Heart Attack
 
 We want to examine the factors that influence heart attacks based on region. In the dataset, the `Region` variable contains of 2 values: Urban and Rural.
 
