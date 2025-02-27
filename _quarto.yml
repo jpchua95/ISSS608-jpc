@@ -39,6 +39,8 @@ website:
           href: Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05d.html
         - text: "Hands-On Exercise 5e (Treemap Visualisation)"
           href: Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05e.html
+        - text: "Hands-On Exercise 7 (Time-Oriented Data Visualisation)"
+          href: Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html
       - text: "In-Class Exercise"
         menu:
         - text: "In-Class Exercise 1 (Sales & Profit Report)"
