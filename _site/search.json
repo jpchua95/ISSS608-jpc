@@ -1118,5 +1118,103 @@
     "title": "Take-Home Exercise 01",
     "section": "4.3. Check for Correlation",
     "text": "4.3. Check for Correlation\nWe check the correlation among all continuous variables. First, we select the numeric variables from the heart_attack dataset using select(where(is.numeric)). Next, we use the cor() function to create the correlation matrix. Then, we use ggcorrplot() to visualise the correlation matrix in a heatmap.\n\nheart_attack_cor &lt;- heart_attack %&gt;% \n    select(where(is.numeric)) \n\n\nheart_attack_cormatrix &lt;- cor(heart_attack_cor, use = \"complete.obs\")\n\n\nThe HeatmapThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggcorrplot(heart_attack_cormatrix,\n           method = \"square\",\n           lab = TRUE,\n           title = \"Correlation Heatmap\",\n           hc.order = TRUE,\n           colors = c(\"#6D9EC1\", \"white\", \"#E46726\")) + \n    theme(axis.text.y = element_text(size = 8),\n          axis.text.x = element_text(size = 8))\n\n\n\n\n\nObservations\nWe observe low correlation between all the variables, as the correlation coefficient between any 2 variables are close to 0. This suggests that there is little to no linear relationship between them.\nThe variables may act independently in contributing to the heart attack occurrence, and multiple factors could be at play without one directly influencing another in a linear fashion."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "",
+    "text": "The following R packages will be used:\n\nscales\nviridis\nlubridate\nggthemes\ngridExtra\nreadxl\nknitr\ndata.table\nCGPfunctions\nggHoriPlot\ntidyverse\n\n\npacman::p_load(scales, viridis, lubridate, ggthemes, gridExtra, \n               readxl, knitr, data.table, CGPfunctions, \n               ggHoriPlot, tidyverse)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "2.1 Importing data",
+    "text": "2.1 Importing data\nThe code chunk below imports the eventlog.csv file into R using the read_csv() function of readr package.\n\nattacks &lt;- read_csv(\"data/eventlog.csv\")\n\nExamine the dataframe before further analysis with summary() and kable(). kable() allows us to review the data structure.\n\nsummary(attacks)\n\n   timestamp                      source_country          tz           \n Min.   :2015-03-12 15:59:16.72   Length:199999      Length:199999     \n 1st Qu.:2015-04-17 22:30:53.34   Class :character   Class :character  \n Median :2015-06-16 17:29:01.86   Mode  :character   Mode  :character  \n Mean   :2015-06-28 08:34:47.76                                        \n 3rd Qu.:2015-08-17 14:20:30.10                                        \n Max.   :2015-12-24 04:37:00.61                                        \n\n\n\nkable(head(attacks))\n\n\n\n\ntimestamp\nsource_country\ntz\n\n\n\n\n2015-03-12 15:59:16\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:00:48\nFR\nEurope/Paris\n\n\n2015-03-12 16:02:26\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:02:38\nUS\nAmerica/Chicago\n\n\n2015-03-12 16:03:22\nCN\nAsia/Shanghai\n\n\n2015-03-12 16:03:45\nCN\nAsia/Shanghai\n\n\n\n\n\nThere are 3 columns:\n\ntimestamp: stores date-time values in POSIXct format.\nsource_country: stores the source of the attack. It is in ISO 3166-1 alpha-2 country code.\ntz: stores time zone of the source IP address."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#data-preparation",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#data-preparation",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "2.2 Data preparation",
+    "text": "2.2 Data preparation\n\n2.2.1 Derive weekday and hour of day\n\nmake_hr_wkday &lt;- function(ts, sc, tz) {\n  real_times &lt;- ymd_hms(ts, \n                        tz = tz[1], \n                        quiet = TRUE)\n  dt &lt;- data.table(source_country = sc,\n                   wkday = weekdays(real_times),\n                   hour = hour(real_times))\n  return(dt)\n  }\n\n\n\n\n\n\n\nNote\n\n\n\n\nymd_hms() and hour() are from the lubridate package\nweekdays() is a base R function\n\n\n\n\n\n2.2.2 Derive attacks tibble data frame\n\nwkday_levels &lt;- c('Saturday', 'Friday', \n                  'Thursday', 'Wednesday', \n                  'Tuesday', 'Monday', \n                  'Sunday')\n\nattacks &lt;- attacks %&gt;%\n  group_by(tz) %&gt;%\n  do(make_hr_wkday(.$timestamp, \n                   .$source_country, \n                   .$tz)) %&gt;% \n  ungroup() %&gt;% \n  mutate(wkday = factor(\n    wkday, levels = wkday_levels),\n    hour  = factor(\n      hour, levels = 0:23))\n\n\n\n\n\n\n\nNote\n\n\n\nmutate() of dplyr package is used to convert wkday and hour fields into factor so they’ll be ordered when plotting."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#building-the-calendar-heatmaps",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#building-the-calendar-heatmaps",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "2.3 Building the calendar heatmaps",
+    "text": "2.3 Building the calendar heatmaps\n\ngrouped &lt;- attacks %&gt;% \n  count(wkday, hour) %&gt;% \n  ungroup() %&gt;%\n  na.omit()\n\nggplot(grouped, \n       aes(hour, \n           wkday, \n           fill = n)) + \ngeom_tile(color = \"white\", \n          size = 0.1) + \ntheme_tufte(base_family = \"Helvetica\") + \ncoord_equal() +\nscale_fill_gradient(name = \"# of attacks\",\n                    low = \"sky blue\", \n                    high = \"dark blue\") +\nlabs(x = NULL, \n     y = NULL, \n     title = \"Attacks by weekday and time of day\") +\ntheme(axis.ticks = element_blank(),\n      plot.title = element_text(hjust = 0.5),\n      legend.title = element_text(size = 8),\n      legend.text = element_text(size = 6) ) \n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n\nna.omit(): exclude missing values\ngeom_tile(): plot tiles (grids) at each x and y position\ncolor and size: specify the border color and line size of the tiles\ntheme_tufte() of ggthemes package: remove unnecessary chart junk\ncoord_equal(): ensure the plot will have an aspect ratio of 1:1\nscale_fill_gradient(): create a two colour gradient (low-high)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#building-multiple-calendar-heatmaps",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#building-multiple-calendar-heatmaps",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "2.4 Building Multiple Calendar Heatmaps",
+    "text": "2.4 Building Multiple Calendar Heatmaps\nFirst, we identify the top 4 countries with the highest number of attacks, using count() and top_n().\nNext, we filter the dataset with only the identified countries using filter().\nThen, we group the data with an additional variable, source_country.\n\ntop_countries &lt;- attacks %&gt;%\n  count(source_country, sort = TRUE) %&gt;%\n  top_n(4, n) %&gt;%\n  pull(source_country)\n\nfiltered_attacks &lt;- attacks %&gt;%\n  filter(source_country %in% top_countries)\n\ngrouped &lt;- filtered_attacks %&gt;% \n  count(source_country, wkday, hour) %&gt;% \n  ungroup() %&gt;%\n  na.omit()\n\nggplot(grouped, \n       aes(hour, \n           wkday, \n           fill = n)) + \ngeom_tile(color = \"white\", \n          size = 0.1) + \ntheme_tufte(base_family = \"Helvetica\") + \ncoord_equal() +\nscale_fill_gradient(name = \"# of attacks\",\n                    low = \"sky blue\", \n                    high = \"dark blue\") +\nlabs(x = NULL, \n     y = NULL, \n     title = \"Attacks by weekday and time of day\") +\ntheme(axis.ticks = element_blank(),\n      plot.title = element_text(hjust = 0.5),\n      legend.title = element_text(size = 8),\n      legend.text = element_text(size = 6) ) +\nfacet_wrap(~ source_country)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#solution---plotting-multiple-calendar-heatmaps",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#solution---plotting-multiple-calendar-heatmaps",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "2.5 Solution - Plotting Multiple Calendar Heatmaps",
+    "text": "2.5 Solution - Plotting Multiple Calendar Heatmaps\n\n2.5.1 Deriving attack by country object\nIdentify the top 4 countries with the highest number of attacks:\n\ncount the number of attacks by country\ncalculate the percent of attackes by country\nsave the results in a tibble data frame\n\n\nattacks_by_country &lt;- count(\n  attacks, source_country) %&gt;%\n  mutate(percent = percent(n/sum(n))) %&gt;%\n  arrange(desc(n))\n\n\n\n2.5.2 Preparing the tidy dataframe\nExtract the attack records of the top 4 countries from the attacks dataframe.\n\ntop4 &lt;- attacks_by_country$source_country[1:4]\ntop4_attacks &lt;- attacks %&gt;%\n  filter(source_country %in% top4) %&gt;%\n  count(source_country, wkday, hour) %&gt;%\n  ungroup() %&gt;%\n  mutate(source_country = factor(\n    source_country, levels = top4)) %&gt;%\n  na.omit()\n\n\n\n2.5.3 Plotting using ggplot2 package\n\nggplot(top4_attacks, \n       aes(hour, \n           wkday, \n           fill = n)) + \n  geom_tile(color = \"white\", \n          size = 0.1) + \n  theme_tufte(base_family = \"Helvetica\") + \n  coord_equal() +\n  scale_fill_gradient(name = \"# of attacks\",\n                    low = \"sky blue\", \n                    high = \"dark blue\") +\n  facet_wrap(~source_country, ncol = 2) +\n  labs(x = NULL, y = NULL, \n     title = \"Attacks on top 4 countries by weekday and time of day\") +\n  theme(axis.ticks = element_blank(),\n        axis.text.x = element_text(size = 7),\n        plot.title = element_text(hjust = 0.5),\n        legend.title = element_text(size = 8),\n        legend.text = element_text(size = 6) )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data-1",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data-1",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "3.1 Importing data",
+    "text": "3.1 Importing data\nThe code chunk below imports the arrivals_by_air.xlsx file into R using the read_excel() function of readxl package.\n\nair &lt;- read_excel(\"data/arrivals_by_air.xlsx\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#deriving-month-and-year-fields",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#deriving-month-and-year-fields",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "3.2 Deriving month and year fields",
+    "text": "3.2 Deriving month and year fields\n\nair$month &lt;- factor(month(air$`Month-Year`), \n                    levels=1:12, \n                    labels=month.abb, \n                    ordered=TRUE) \nair$year &lt;- year(ymd(air$`Month-Year`))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#extract-the-target-country",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#extract-the-target-country",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "3.3 Extract the target country",
+    "text": "3.3 Extract the target country\n\nVietnam &lt;- air %&gt;% \n  select(`Vietnam`, \n         month, \n         year) %&gt;%\n  filter(year &gt;= 2010)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#computing-year-average-arrivals-by-month",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#computing-year-average-arrivals-by-month",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "3.4 Computing year average arrivals by month",
+    "text": "3.4 Computing year average arrivals by month\n\nhline.data &lt;- Vietnam %&gt;% \n  group_by(month) %&gt;%\n  summarise(avgvalue = mean(`Vietnam`))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#plotting-the-cycle-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#plotting-the-cycle-plot",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "3.5 Plotting the cycle plot",
+    "text": "3.5 Plotting the cycle plot\n\nggplot() + \n  geom_line(data=Vietnam,\n            aes(x=year, \n                y=`Vietnam`, \n                group=month), \n            colour=\"black\") +\n  geom_hline(aes(yintercept=avgvalue), \n             data=hline.data, \n             linetype=6, \n             colour=\"red\", \n             size=0.5) + \n  facet_grid(~month) +\n  labs(axis.text.x = element_blank(),\n       title = \"Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019\") +\n  xlab(\"\") +\n  ylab(\"No. of Visitors\") +\n  theme_tufte(base_family = \"Helvetica\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data-2",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#importing-data-2",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "4.1 Importing data",
+    "text": "4.1 Importing data\nThe code chunk below imports the rice.csv file into R using the read_csv() function of readr package.\n\nrice &lt;- read_csv(\"data/rice.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#plotting-the-slopegraph",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#plotting-the-slopegraph",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "4.2 Plotting the slopegraph",
+    "text": "4.2 Plotting the slopegraph\n\nrice %&gt;% \n  mutate(Year = factor(Year)) %&gt;%\n  filter(Year %in% c(1961, 1980)) %&gt;%\n  newggslopegraph(Year, Yield, Country,\n                Title = \"Rice Yield of Top 11 Asian Counties\",\n                SubTitle = \"1961-1980\",\n                Caption = \"Prepared by: Dr. Kam Tin Seong\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nFor effective data visualisation design, factor() is used convert the value type of Year field from numeric to factor.\n\n\n1"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#footnotes",
+    "href": "Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html#footnotes",
+    "title": "Hands-On Exercise 07: Visualising and Analysing Time-oriented Data",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThis document was completed with reference to:\n\nProf Kam’s notes “17 Visualising and Analysing Time-oriented Data”: https://r4va.netlify.app/chap17\n\n↩︎"
   }
 ]
