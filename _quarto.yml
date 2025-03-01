@@ -59,6 +59,8 @@ website:
           href: In-class_Ex/In-class_Ex05/In-class_Ex05.html
         - text: "In-Class Exercise 6 (Histogram on Shiny App)"          
           href: https://jpchua.shinyapps.io/In-class_Ex06/
+        - text: "In-Class Exercise 7 (Time-Series Data)"
+          href: In-class_Ex/In-class_Ex07/In-class_Ex07.html
       - text: "Take-Home Exercise"
         menu:
         - text: "Take-home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"

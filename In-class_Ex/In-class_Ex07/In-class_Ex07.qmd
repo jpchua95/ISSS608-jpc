@@ -1,0 +1,536 @@
+---
+title: "In-Class Exercise 07: Visualising and Analysing Time-oriented Data"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+The following R packages will be used.
+
+```{r}
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal)
+```
+
+## 1.1 Importing data
+
+The code chunk below imports the *visitor_arrivals_by_air.csv* file into R using the `read_csv()` function of *readr* package.
+
+```{r}
+ts_data <- read_csv(
+  "data/visitor_arrivals_by_air.csv")
+```
+
+## 1.2 Preparing data
+
+```{r}
+ts_data
+```
+
+Convert the data type of the Month-Year field from Character (chr) to Date using `dmy()`, and overwrite the existing Month-Year field.
+
+```{r}
+ts_data$`Month-Year` <- dmy(
+  ts_data$`Month-Year`)
+```
+
+```{r}
+ts_data
+```
+
+We use `ts()` function from tsibble to convert from a typical data frame into a time series tibble object
+
+```{r}
+ts_data_ts <- ts(ts_data)       
+head(ts_data_ts)
+```
+
+```{r}
+class(ts_data)
+```
+
+```{r}
+class(ts_data_ts)
+```
+
+::: callout-note
+`ts_data_ts` is no longer the typical tibble dataframe.
+
+Use `ts_data` to do all the necessary data preparation, before converting it to a timeseries dataframe.
+:::
+
+## 1.3 Convert *tibble* object to *tsibble* object
+
+We convert `ts_data` from a tibble object into tsibble object using [`as_tsibble()`](https://tsibble.tidyverts.org/reference/as-tibble.html) of **tsibble** R package.
+
+```{r}
+ts_tsibble <- ts_data %>%
+  mutate(Month = yearmonth(`Month-Year`)) %>%
+  as_tsibble(index = `Month`)
+```
+
+# 2. Visualising Time Series Data
+
+First, reorganise the data frame from wide to long format using `pivot_longer()`.
+
+```{r}
+ts_longer <- ts_data %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+## 2.1 Visualising single time-series: ggplot2 methods
+
+We use:
+
+-   [`filter()`](https://dplyr.tidyverse.org/reference/filter.html) of [**dplyr**](https://dplyr.tidyverse.org/) package is used to select records belong to Vietnam
+
+-   [`geom_line()`](https://ggplot2.tidyverse.org/reference/geom_path.html) of [**ggplot2**](https://ggplot2.tidyverse.org/) package is used to plot the time-series line graph
+
+```{r}
+ts_longer %>%
+  filter(Country == "Vietnam") %>%
+  ggplot(aes(x = `Month-Year`, 
+             y = Arrivals))+
+  geom_line(size = 0.5)
+```
+
+## 2.2 Plotting multiple time-series data with ggplot2 methods
+
+We plot multiple time-series data without facet.
+
+```{r}
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals,
+           color = Country))+
+  geom_line(size = 0.5) +
+  theme(legend.position = "bottom", 
+        legend.box.spacing = unit(0.5, "cm"))
+```
+
+The line graph is not meaningful for comparison across countries.
+
+We add `facet_wrap()` by `Country`.
+
+```{r}
+#| fig-height: 12
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals))+
+  geom_line(size = 0.5) +
+  facet_wrap(~ Country,
+             ncol = 3,
+             scales = "free_y") +
+  theme_bw()
+```
+
+::: callout-note
+-   Number of columns and rows can be defined
+
+    -   `ncol` argument is used to defined the number of columns
+
+-   `scales = "free_y"` argument is used to indicated flexible range for y-axis
+:::
+
+# 3. Visual Analysis of Time-series Data
+
+We plot a seasonal plot and identify individual seasons within the plot.
+
+```{r}
+tsibble_longer <- ts_tsibble %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Italy" |
+         Country == "Vietnam" |
+         Country == "United Kingdom" |
+         Country == "Germany") %>% 
+  gg_season(Arrivals)
+```
+
+## 3.1 Visualise seasonality with Cycle Plot
+
+A cycle plot shows how a trend of cycle changes over a period of time.
+
+The following line graph shows seasonal patterns but not the trend, but this is a good starting point to view generic patterns.
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  autoplot(Arrivals) + 
+  facet_grid(Country ~ ., scales = "free_y")
+```
+
+[`gg_subseries()`](https://feasts.tidyverts.org/reference/gg_subseries.html) of feasts package creates seasonal subseries plot. The cycle plot now shows the seasonal patterns and trend.
+
+```{r}
+#| fig-height: 6
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  gg_subseries(Arrivals)
+```
+
+This helps to decompose the time series and help us interpret the cycle pattern.
+
+# 4. Time Series Decomposition
+
+## 4.1 ACF
+
+Identify auto-correlation between time-series plots with [ACF()](https://feasts.tidyverts.org/reference/ACF.html).
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  ACF(Arrivals) %>%
+  autoplot()
+```
+
+-   Seasonal patterns in Vietnam repeats every 12 months
+
+-   Signs of auto-correlation for China and Vietnam as the lags are statistically significant at 95% confidence interval. The auto-correlations are strong, and for Vietnam it dies down in the second cycle
+
+-   Signs of trend and seasonal are strong for China and Vietnam, the only difference is in the time period
+
+-   Trend is not significant for Italy and UK
+
+::: callout-note
+By default, the `ACF()` function returns a table of output.
+
+The `autopilot()` function plots the acf output.
+:::
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  ACF(Arrivals) #%>%
+  #autoplot()
+```
+
+## 4.2 PACF
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  PACF(Arrivals) %>%
+  autoplot()
+```
+
+-   PACF for UK in lag 2 is significant but is in the opposite direction. I.e. in the 3rd period (month), the arrival will reduce significantly.
+
+-   PACF for Vietnam in lag 2 is also significant and in opposite direction, but it's not as significant as UK. In the 3rd period (month), the arrival will change but not as significant and UK.
+
+-   Compare between time lag and the period with significant changes.
+
+## 4.3 Composite plot of time series decomposition
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  gg_tsdisplay(Arrivals)
+```
+
+# 5. Visual STL Diagnostics with Feasts
+
+We use `STL()` to perform decomposition, followed by `autoplot()` to plot the chart.
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+We observe clear signs of seasonal pattern. Basic forecasting will work well on these patterns. If there is no trend and seasonal, e.g. straight line, can fit ARIMA and exponential. 4th chart: no clear seasonal and interval is not regular. This is white noise as it varies in different way.
+
+If remainder gives a clear seasonal or trend, this means the decomposition is not well. Curve-fitting and ARIMA wont work. ML and deep learning is required as they will perform better.
+
+# 6. Visual Forecasting
+
+## 6.1 Time series data sampling
+
+Keep the last few rows of data as hold-out data, e.g. 3 months, 6 months, 1 year, depending on the seasonal pattern. Must follow the sequence and cannot pick random set of data.
+
+We can create an extra column *Type*, indicating training vs hold-out data using `mutate()` of **dplyr** package.
+
+```{r}
+vietnam_ts <- tsibble_longer %>%
+  filter(Country == "Vietnam") %>% 
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training"))
+```
+
+Extract the training data using `filter()` function of **dplyr** package.
+
+```{r}
+vietnam_train <- vietnam_ts %>%
+  filter(`Month-Year` < "2019-01-01")
+```
+
+## 6.2 EDA of time-series data
+
+```{r}
+vietnam_train %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+## 6.3 Fitting forecasting models
+
+### 6.3.1 Fitting Exponential Smoothing State Space (ETS) models: fable methods
+
+```{r}
+vietnam_train %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+### 6.3.2 Fitting Simple Exponential Smoothing (SES)
+
+```{r}
+fit_ses <- vietnam_train %>%
+  model(ETS(Arrivals ~ error("A") 
+            + trend("N") 
+            + season("N")))
+fit_ses
+```
+
+### 6.3.3 Examine model assumptions
+
+```{r}
+gg_tsresiduals(fit_ses)
+```
+
+### 6.3.4 The model details
+
+```{r}
+fit_ses %>%
+  report()
+```
+
+### 6.3.5 Trend methods
+
+```{r}
+vietnam_H <- vietnam_train %>%
+  model(`Holt's method` = 
+          ETS(Arrivals ~ error("A") +
+                trend("A") + 
+                season("N")))
+vietnam_H %>% report()
+```
+
+### 6.3.6 Damped trend methods
+
+```{r}
+vietnam_HAd <- vietnam_train %>%
+  model(`Holt's method` = 
+          ETS(Arrivals ~ error("A") +
+                trend("Ad") + 
+                season("N")))
+vietnam_HAd %>% report()
+```
+
+### 6.3.7 Checking results
+
+```{r}
+gg_tsresiduals(vietnam_H)
+```
+
+```{r}
+gg_tsresiduals(vietnam_HAd)
+```
+
+## 6.4 Fitting ETS Methods with Season: Holt-Winters
+
+```{r}
+Vietnam_WH <- vietnam_train %>%
+  model(
+    Additive = ETS(Arrivals ~ error("A") 
+                   + trend("A") 
+                   + season("A")),
+    Multiplicative = ETS(Arrivals ~ error("M") 
+                         + trend("A") 
+                         + season("M"))
+    )
+
+Vietnam_WH %>% report()
+```
+
+## 6.5 Fitting multiple ETS Models
+
+```{r}
+fit_ETS <- vietnam_train %>%
+  model(`SES` = ETS(Arrivals ~ error("A") + 
+                      trend("N") + 
+                      season("N")),
+        `Holt`= ETS(Arrivals ~ error("A") +
+                      trend("A") +
+                      season("N")),
+        `damped Holt` = 
+          ETS(Arrivals ~ error("A") +
+                trend("Ad") + 
+                season("N")),
+        `WH_A` = ETS(
+          Arrivals ~ error("A") + 
+            trend("A") + 
+            season("A")),
+        `WH_M` = ETS(Arrivals ~ error("M") 
+                         + trend("A") 
+                         + season("M"))
+  )
+```
+
+## 6.6 The model coefficient
+
+```{r}
+fit_ETS %>%
+  tidy()
+```
+
+## 6.7 Model Comparison
+
+```{r}
+fit_ETS %>% 
+  report()
+```
+
+Best model has the smallest AIC and BIC. Statistical comparison.
+
+## 6.8 Forecasting future values
+
+Visually we can see which model fits the best.
+
+```{r}
+fit_ETS %>%
+  forecast(h = "12 months") %>%
+  autoplot(vietnam_ts, 
+           level = NULL)
+```
+
+## 6.9 Fitting ETS automatically
+
+```{r}
+fit_autoETS <- vietnam_train %>%
+  model(ETS(Arrivals))
+fit_autoETS %>% report()
+```
+
+Checking the model assumptions with `gg_tsresiduals()`.
+
+```{r}
+gg_tsresiduals(fit_autoETS)
+```
+
+## 6.10 Forecast the future values
+
+There's bo need to show the front part of the trends - just show the last 2 cycles will do.
+
+```{r}
+fit_autoETS %>%
+  forecast(h = "12 months") %>%
+  autoplot(vietnam_train)
+```
+
+## 6.11 Visualising AutoETS model with ggplot2
+
+We can visualise relationship between the training data and forecasted values vs the hold-out data.
+
+```{r}
+fc_autoETS <- fit_autoETS %>%
+  forecast(h = "12 months")
+
+vietnam_ts %>%
+  ggplot(aes(x=`Month`, 
+             y=Arrivals)) +
+  autolayer(fc_autoETS, 
+            alpha = 0.6) +
+  geom_line(aes(
+    color = Type), 
+    alpha = 0.8) + 
+  geom_line(aes(
+    y = .mean, 
+    colour = "Forecast"), 
+    data = fc_autoETS) +
+  geom_line(aes(
+    y = .fitted, 
+    colour = "Fitted"), 
+    data = augment(fit_autoETS))
+```
+
+# 7. AutoRegressive Integrated Moving Average(ARIMA) Methods for Time Series Forecasting: fable (tidyverts) methods
+
+## **7.1 Visualising Autocorrelations: feasts methods**
+
+```{r}
+vietnam_train %>%
+  gg_tsdisplay(plot_type='partial')
+```
+
+## 7.2 Visualising Autocorrelations: feasts methods
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "United Kingdom") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+## 7.3 Differencing: fable methods
+
+Trend differencing:
+
+`gg_tsdisplay()` shows the PACF after differencing with `difference()`.
+
+`lag` argument can be define to visualise if white noise presents.
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    lag = 1), 
+    plot_type='partial')
+```
+
+Seasoning differencing:
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    difference = 12), 
+    plot_type='partial')
+```
