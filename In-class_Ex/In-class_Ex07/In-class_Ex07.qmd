@@ -74,6 +74,10 @@ ts_tsibble <- ts_data %>%
   as_tsibble(index = `Month`)
 ```
 
+```{r}
+ts_tsibble
+```
+
 # 2. Visualising Time Series Data
 
 First, reorganise the data frame from wide to long format using `pivot_longer()`.

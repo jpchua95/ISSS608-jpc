@@ -65,6 +65,8 @@ website:
         menu:
         - text: "Take-home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
+        - text: "Take-home Exercise 2 (Singapore's International Trade)"
+          href: Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html
 
 format:
   html:
