@@ -1,11 +1,17 @@
 ---
-title: "ISSS608-group12"
+title: "ISSS608 Group12"
 ---
 
-This is a Quarto website.
+::: {style="text-align: center"}
+**Hello! We are Group 12, nice to meet you 😊**
+:::
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+# The Team
 
-```{r}
-1 + 1
-```
+[**Zanelle Lee Wenfang**](https://www.linkedin.com/in/zanellelee/)
+
+![](zanelle.jpeg)
+
+[**Chua Jia Peng**](https://www.linkedin.com/in/chuajp/)
+
+![](images/Corporate headshot 2022.jpg)
