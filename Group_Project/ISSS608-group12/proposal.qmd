@@ -45,7 +45,7 @@ We also identified 2 research papers related to the study of dengue cases that c
 
 -   [Temporal patterns of dengue epidemics: The case of recent outbreaks in Kaohsiung](https://www.sciencedirect.com/science/article/pii/S1995764517301244)
 
-# Proposed Approach 
+# Proposed Approach
 
 1.  Load the relevant R packages
 
