@@ -495,14 +495,11 @@ t_imports_countries <- t_imports_countries[, c(ncol(t_imports_countries), 1:(nco
 
 ```{r}
 t_imports_countries$`Year-Month` <- gsub("Sep", "Sept", t_imports_countries$`Year-Month`)
-t_imports_countries
 ```
 
 ```{r}
 t_imports_countries$`Year-Month` <- as.yearmon(t_imports_countries$`Year-Month`, format = "%Y %b") %>%
   yearmonth()
-
-t_imports_countries
 ```
 
 We will preserve the continent information, and this has to be done before we convert the dataset to a tsibble object.
