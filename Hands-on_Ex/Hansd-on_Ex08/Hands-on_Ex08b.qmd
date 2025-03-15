@@ -1,0 +1,115 @@
+---
+title: "Hands-On Exercise 08b: Visualising Geospatial Point Data"
+author: "Jia Peng Chua"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+---
+
+# 1. Getting Started
+
+Let's install the required R packages.
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
+
+# 2. Importing Data into R
+
+## 2.1 Importing Geospatial Data
+
+The code chunk below imports the *SGPools_svy21.csv*  file into R using the `read_csv()` function of *readr* package.
+
+```{r}
+sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+```
+
+```{r}
+list(sgpools)
+```
+
+The code chunk below converts sgpools data frame into a simple feature data frame by using `st_as_sf()` of *sf* packages
+
+```{r}
+sgpools_sf <- st_as_sf(sgpools, 
+                       coords = c("XCOORD", "YCOORD"),
+                       crs= 3414)
+```
+
+::: callout-note
+-   The *coords* argument requires you to provide the column name of the x-coordinates first then followed by the column name of the y-coordinates.
+
+-   The *crs* argument required you to provide the coordinates system in epsg format. [EPSG: 3414](https://epsg.io/3414) is Singapore SVY21 Projected Coordinate System. You can search for other country’s epsg code by refering to [epsg.io](https://epsg.io/).
+:::
+
+```{r}
+list(sgpools_sf)
+```
+
+# 3. Drawing Proportional Symbol Map
+
+The code churn below will turn on the interactive mode of tmap.
+
+```{r}
+tmap_mode("view")
+```
+
+## 3.1 Interactive point symbol map
+
+The code chunks below are used to create an interactive point symbol map.
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = 1,
+           border.col = "black",
+           border.lwd = 1)
+```
+
+## 3.2 Making the map proportional
+
+To draw a proportional symbol map, we need to assign a numerical variable to the size visual attribute. The code chunks below show that the variable `Gp1Gp2Winnings` is assigned to size visual attribute.
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = "Gp1Gp2 Winnings",
+           border.col = "black",
+           border.lwd = 1)
+```
+
+## 3.3 Giving the map different colours
+
+The proportional symbol map can be further improved by using the colour visual attribute. In the code chunks below, `OUTLET_TYPE` variable is used as the colour attribute variable.
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1)
+```
+
+## 3.4 Creating twin maps
+
+The argument `sync` in `tm_facets()` can be used in this case to produce multiple maps with synchronised zoom and pan settings.
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+
+Switch `tmap`'s Viewer back to plot mode.
+
+```{r}
+tmap_mode("plot")
+```
