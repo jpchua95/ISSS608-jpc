@@ -42,11 +42,11 @@ website:
         - text: "Hands-On Exercise 7 (Time-Oriented Data Visualisation)"
           href: Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html
         - text: "Hands-On Exercise 8a (Choropleth Mapping with R)"
-          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08a.html
+          href: hands-on_ex/hands-on_ex08/hands-on_ex08a.html
         - text: "Hands-On Exercise 8b (Visualising Geospatial Point Data)"
-          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08b.html
+          href: hands-on_ex/hands-on_ex08/hands-on_ex08b.html
         - text: "Hands-On Exercise 8c (Analytical Mapping)"
-          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08c.html
+          href: hands-on_Ex/hands-on_ex08/hands-on_ex08c.html
       - text: "In-Class Exercise"
         menu:
         - text: "In-Class Exercise 1 (Sales & Profit Report)"
@@ -73,9 +73,9 @@ website:
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex08SGPropertyTransactions/SGRealEstateTransactions
       - text: "Take-Home Exercise"
         menu:
-        - text: "Take-home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
+        - text: "Take-Home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
-        - text: "Take-home Exercise 2 (Singapore's International Trade)"
+        - text: "Take-Home Exercise 2 (Singapore's International Trade)"
           href: Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html
 
 format:
