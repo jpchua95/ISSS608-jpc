@@ -42,11 +42,11 @@ website:
         - text: "Hands-On Exercise 7 (Time-Oriented Data Visualisation)"
           href: Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html
         - text: "Hands-On Exercise 8a (Choropleth Mapping with R)"
-          href: hands-on_ex/hands-on_ex08/hands-on_ex08a.html
+          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08a.html
         - text: "Hands-On Exercise 8b (Visualising Geospatial Point Data)"
-          href: hands-on_ex/hands-on_ex08/hands-on_ex08b.html
+          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08b.html
         - text: "Hands-On Exercise 8c (Analytical Mapping)"
-          href: hands-on_Ex/hands-on_ex08/hands-on_ex08c.html
+          href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08c.html
       - text: "In-Class Exercise"
         menu:
         - text: "In-Class Exercise 1 (Sales & Profit Report)"
