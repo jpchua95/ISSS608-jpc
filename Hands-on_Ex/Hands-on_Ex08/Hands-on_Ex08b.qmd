@@ -21,7 +21,7 @@ pacman::p_load(sf, tmap, tidyverse)
 
 ## 2.1 Importing Geospatial Data
 
-The code chunk below imports the *SGPools_svy21.csv*  file into R using the `read_csv()` function of *readr* package.
+The code chunk below imports the *SGPools_svy21.csv* file into R using the `read_csv()` function of *readr* package.
 
 ```{r}
 sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")

@@ -47,6 +47,8 @@ website:
           href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08b.html
         - text: "Hands-On Exercise 8c (Analytical Mapping)"
           href: Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08c.html
+        - text: "Hands-On Exercise 9 (Modelling, Visualising and Analysing Network Data with R)"
+          href: Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html
       - text: "In-Class Exercise"
         menu:
         - text: "In-Class Exercise 1 (Sales & Profit Report)"
