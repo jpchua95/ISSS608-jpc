@@ -19,7 +19,7 @@ pacman::p_load(igraph, tidygraph, ggraph,
                tidyverse, graphlayouts)
 ```
 
-# 2. Importing Data
+# 2. Importing Data![](images/clipboard-9133593.png)
 
 There are 2 datasets: the edges (links) data and nodes data.
 
@@ -82,8 +82,8 @@ GAStech_edges_aggregated <- GAStech_edges %>%
   filter(MainSubject == "Work related") %>%
   group_by(source, target, Weekday) %>%
     summarise(Weight = n()) %>%
-  filter(source!=target) %>%
-  filter(Weight > 1) %>%
+  filter(source!=target) %>%  #filter out emails that cc back to the source
+  filter(Weight > 1) %>%  #filter out count = 0 or 1
   ungroup()
 ```
 
