@@ -1,22 +1,3 @@
-{
-  "name": "Leaflet.Sync",
-  "version": "0.2.2",
-  "homepage": "https://github.com/turban/Leaflet.Sync",
-  "authors": [
-    "Bjorn Sandvik",
-    "Jan Pieter Waagmeester <jieter@jieter.nl>"
-  ],
-  "description": "Sync interaction across multiple Leaflet maps",
-  "main": "L.Map.Sync.js",
-  "keywords": [
-    "Leaflet",
-    "map",
-    "synchronisation"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "test"
-  ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc73dbc3124600dbdb2403f72d4a79d2354db207032e2204f4a4fc780a629632
+size 441
