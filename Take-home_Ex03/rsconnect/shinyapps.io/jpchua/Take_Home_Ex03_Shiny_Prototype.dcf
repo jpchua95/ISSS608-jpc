@@ -1,0 +1,12 @@
+name: Take_Home_Ex03_Shiny_Prototype
+title: Take_Home_Ex03_Shiny_Prototype
+username: jpchua
+account: jpchua
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14376285
+bundleId: 10026181
+url: https://jpchua.shinyapps.io/Take_Home_Ex03_Shiny_Prototype/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

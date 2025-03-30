@@ -1,0 +1,952 @@
+---
+title: "Take-Home Exercise 03a (Dengue Cases in Taiwan - EDA, CDA)"
+author: "Jia Peng Chua"
+date: "March 20, 2025"
+date-modified: "last-modified"
+execute:
+    echo: true
+    eval: true
+    warning: false
+    freeze: true
+bibliography: references.bib
+---
+
+# 1. Introduction
+
+## 1.1 Motivation
+
+Dengue fever has been a pressing public health concern globally, with an increasing incidence due to urbanization, international travels and climate change. Taiwan, despite not being an endemic region, has experienced recurrent dengue outbreaks primarily due to imported cases from neighbouring Southeast Asian countries.
+
+## 1.2 Imported Cases as the Primary Cause of Outbreaks
+
+Several studies highlight the impact of imported dengue cases on local outbreaks in non-endemic regions such as Taiwan. Reports from the Taiwan Centers for Disease Control indicate that Taiwan has historically experienced dengue outbreaks despite not having endemic transmission. Imported cases, particularly from Southeast Asia, have been identified as the primary cause of local outbreaks.
+
+A study published in PubMed Central supports this claim, stating that continuous importation of Dengue Virus (DENV) strains from neighboring countries remains the major driver of dengue epidemics in Taiwan.[@yung2015] In 2019, Taiwan reported 540 imported cases, making local containment more challenging. The COVID-19 pandemic (2020-2022) led to a temporary decline in imported cases due to strict border controls, resulting in fewer local outbreaks. However, after the easing of restrictions in 2023, there was a surge of imported cases, contributing to a major outbreak of local cases.[@chiu2024]
+
+## 1.3 Understanding the Dengue Transmission Dynamics
+
+Dengue Virus (DENV) consists of 4 serotypes - DEN-1 to DEN-4. These are primarily transmitted by Aedes aegypti and Aedes albopictus mosquitoes. While climate conditions and urbanization contribute to the local spread of dengue, the introduction of infected travelers plays a crucial role in initiating outbreaks. Imported cases introduce new viral strains into non-endemic areas, providing a source for further transmission if competent mosquito vectors are present.[@yung2015]
+
+## 1.4 Objectives
+
+This take home exercise aims to:
+
+-   Develop interactive visualizations to illustrate the temporal trends in dengue cases across the years geographic locations in Taiwan
+
+-   Conduct exploratory data analysis of dengue cases with relevant factors
+
+-   Conduct association test analysis of dengue cases with factors such as gender, age groups and dengue serotypes
+
+Taiwan’s historical dengue cases data presents a good opportunity to analyse long-term trends and seasonal outbreaks. Useful insights can potentially be discovered to better understand and predict these incidences.
+
+# 2. Loading R Packages and Datasets
+
+## 2.1 Loading R Packages
+
+The following R packages will be required:
+
+-   `tidyverse`: Used for data manipulation, visualisation and analysis
+
+-   `plotly`: For plotting interactive statistical graphs
+
+-   `sf`: For analysing and visualising spatial data
+
+-   `tmap`: Create static and interactive thematic maps
+
+-   `GGally`: Provide additional visualisation functions
+
+-   `ggstatplot`: For integrating statistical analysis into visualisations
+
+-   `ggmosaic`: For visualisation of categorical data relationships and associations
+
+```{r}
+#| code-fold: true
+#| code-summary: "Loading R packages"
+pacman::p_load(tidyverse, plotly, sf, tmap, GGally, ggstatsplot, ggmosaic)
+```
+
+## 2.2 Importing Dengue Dataset
+
+The code chunk below uses `read_csv()` of `readr` to import the `dengue_daily` dataset into R environment.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Importing Dengue_Daily dataset"
+dengue_daily <- read_csv("data/Dengue_Daily.csv")
+
+summary(dengue_daily)
+```
+
+Translating the column names into English will make the dataset more user-friendly:
+
+-   發病日: Onset Date
+
+-   個案研判日: Case Classification Date
+
+-   通報日: Reporting Date
+
+-   性別: Gender
+
+-   年齡層: Age Group
+
+-   居住縣市: Residential County/City
+
+-   居住鄉鎮: Residential Town/District
+
+-   居住村里: Residential Village
+
+-   最小統計區: Smallest Statistical Area
+
+-   最小統計區中心點X: X-coord
+
+-   最小統計區中心點Y: Y-coord
+
+-   一級統計區: Primary Statistical Area
+
+-   二級統計區: Secondary Statistical Area
+
+-   感染縣市: Infection County/City
+
+-   感染鄉鎮: Infection Town/District
+
+-   感染村里: Infection Village
+
+-   是否境外移入: Imported Case
+
+-   感染國家: Infection Country
+
+-   確定病例數: Confirmed Cases
+
+-   居住村里代碼: Residential Village Code
+
+-   感染村里代碼: Infection Village Code
+
+-   血清型: Serotype
+
+-   內政部居住縣市代碼: MOI Residential County Code
+
+-   內政部居住鄉鎮代碼: MOI Residential Town Code
+
+-   內政部感染縣市代碼: MOI Infection County Code
+
+-   內政部感染鄉鎮代碼: MOI Infection Town Code
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+colnames(dengue_daily) <- c("Onset_Date", "Case_Classification_Date", "Reporting_Date", "Gender", 
+                  "Age_Group", "Residential_County_City", "Residential_Town_District", 
+                  "Residential_Village", "Smallest_Statistical_Area", "X_coord", 
+                  "Y_coord", "Primary_Statistical_Area", "Secondary_Statistical_Area",
+                  "Infection_County_City", "Infection_Town_District", "Infection_Village",
+                  "Imported_Case", "Infection_Country", "Confirmed_Cases", 
+                  "Residential_Village_Code", "Infection_Village_Code", "Serotype", 
+                  "MOI_Residential_County_Code", "MOI_Residential_Town_Code", 
+                  "MOI_Infection_County_Code", "MOI_Infection_Town_Code")
+```
+
+Checking the column titles:
+
+```{r}
+#| echo: FALSE
+names(dengue_daily)
+```
+
+Translating the `Imported_Case` and `Residential_County_City` column values for better usability.
+
+-   屏東縣: Pingtung County
+
+-   宜蘭縣: Yilan County
+
+-   高雄市: Kaohsiung City
+
+-   桃園市: Taoyuan City
+
+-   新北市: New Taipei City
+
+-   台北市: Taipei City
+
+-   台南市: Tainan City
+
+-   新竹縣: Hsinchu County
+
+-   南投縣: Nantou County
+
+-   台中市: Taichung City
+
+-   新竹市: Hsinchu City
+
+-   雲林縣: Yunlin County
+
+-   彰化縣: Changhua County
+
+-   花蓮縣: Hualien County
+
+-   台東縣: Taitung County
+
+-   嘉義縣: Chiayi County
+
+-   嘉義市: Chiayi City
+
+-   基隆市: Keelung City
+
+-   苗栗縣: Miaoli County
+
+-   澎湖縣: Penghu County
+
+-   連江縣: Lianjiang County
+
+-   金門縣: Kinmen County
+
+```{r}
+dengue_daily <- dengue_daily %>%
+    rowwise() %>% 
+    mutate(Confirmed_Cases = list(rep(1, Confirmed_Cases))) %>% 
+    unnest(Confirmed_Cases)  
+```
+
+Viewing the `Age_Group` column.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+#| fig-height: 10
+#| fig-width: 8
+age_group_count <- dengue_daily %>%
+  count(Age_Group)
+
+print(age_group_count)
+```
+
+The Age_Group values are inconsistent as there are individual values with relatively low counts. Let's combine ages 0,1,2,3,4, to a single age group, "0-4", and sort the columns for better readability.
+
+We will also translate the columns for better readability for our users.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code for translations and regrouping of age group"
+dengue_daily <- dengue_daily %>%
+    mutate(Residential_County_City = recode(Residential_County_City,
+                                              "屏東縣" = "Pingtung County",
+                                              "宜蘭縣" = "Yilan County",
+                                              "高雄市" = "Kaohsiung City",
+                                              "桃園市" = "Taoyuan City",
+                                              "新北市" = "New Taipei City",
+                                              "台北市" = "Taipei City",
+                                              "台南市" = "Tainan City",
+                                              "新竹縣" = "Hsinchu County",
+                                              "南投縣" = "Nantou County",
+                                              "台中市" = "Taichung City",
+                                              "新竹市" = "Hsinchu City",
+                                              "雲林縣" = "Yunlin County",
+                                              "彰化縣" = "Changhua County",
+                                              "花蓮縣" = "Hualien County",
+                                              "台東縣" = "Taitung County",
+                                              "嘉義縣" = "Chiayi County",
+                                              "嘉義市" = "Chiayi City",
+                                              "基隆市" = "Keelung City",
+                                              "苗栗縣" = "Miaoli County",
+                                              "澎湖縣" = "Penghu County",
+                                              "連江縣" = "Lianjiang County",
+                                              "金門縣" = "Kinmen County"),
+           Imported_Case = recode(Imported_Case, "是" = "Yes", "否" = "No"),
+           Serotype = recode(Serotype, "第一型" = "Type 1",
+                             "第二型" = "Type 2",
+                             "第三型" = "Type 3",
+                             "第四型" = "Type 4"),
+           Age_Group = ifelse(Age_Group %in% c("0", "1", "2", "3", "4"), 
+                              "0-4", Age_Group),
+           Age_Group = factor(Age_Group, levels = c("0-4", "5-9", 
+                                                    sort(unique(Age_Group[
+                                                        Age_Group != "0-4" &
+                                                            Age_Group != "5-9"]
+                                                        )))))
+```
+
+We'll select columns required for our analysis.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Selected columns"
+dengue_daily <- dengue_daily %>% 
+    select(Onset_Date, Gender, Age_Group, Residential_County_City, 
+           Residential_Town_District, X_coord, Y_coord, Imported_Case, Serotype,
+           MOI_Residential_County_Code, MOI_Residential_Town_Code)
+```
+
+# 3. Data Preparation
+
+## 3.1 View Dataset Over the Years
+
+Let's view the dengue cases over the years.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+
+dengue_daily <- dengue_daily %>%
+  mutate(Onset_Date = ymd(Onset_Date)) %>%
+  mutate(Onset_Year = as.integer(year(Onset_Date)))
+
+group_by_year <- dengue_daily %>%
+  group_by(Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplotly(ggplot(group_by_year, aes(x = Onset_Year, y = Count)) +
+             geom_line() +
+             labs(title = "Dengue Cases Across Years",
+                  x = "Year",
+                  y = "Count of Cases"))
+```
+
+Let's view the dengue cases by various factors over the years.
+
+::: panel-tabset
+### Age Group
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+group_by_age <- dengue_daily %>%
+  group_by(Age_Group, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplot(group_by_age, aes(x = Onset_Year, y = Count, fill = factor(Age_Group))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Dengue Cases by Age Group Across Years",
+        x = "Year",
+        y = "Count of Cases",
+        fill = "Age_Group")
+```
+
+### Gender
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+group_by_gender <- dengue_daily %>%
+  group_by(Gender, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplot(group_by_gender, aes(x = Onset_Year, y = Count, fill = factor(Gender))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Dengue Cases by Gender Across Years",
+        x = "Year",
+        y = "Count of Cases",
+        fill = "Gender")
+```
+
+### Serotype
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+group_by_serotype <- dengue_daily %>%
+  group_by(Serotype, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplot(group_by_serotype, aes(x = Onset_Year, y = Count, fill = factor(Serotype))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Dengue Cases by Serotype Across Years",
+        x = "Year",
+        y = "Count of Cases",
+        fill = "Serotype") 
+```
+
+### Residential County City
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+#| fig-width: 10
+group_by_county <- dengue_daily %>%
+  group_by(Residential_County_City, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplot(group_by_county, aes(x = Onset_Year, y = Count, fill = factor(Residential_County_City))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Dengue Cases by County City Across Years",
+        x = "Year",
+        y = "Count of Cases",
+        fill = "County City") + 
+    theme(legend.text = element_text(size = 7),   
+    )
+```
+
+### Imported Cases
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+group_by_imported <- dengue_daily %>%
+  group_by(Imported_Case, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplot(group_by_imported, aes(x = Onset_Year, y = Count, fill = factor(Imported_Case))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Dengue Cases by County City Across Years",
+        x = "Year",
+        y = "Count of Cases",
+        fill = "Imported Case") 
+```
+:::
+
+## 3.2 Check Missing Values
+
+::: panel-tabset
+### X_coord
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+sum(is.na(dengue_daily$X_coord))
+```
+
+### Y_coord
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+sum(is.na(dengue_daily$Y_coord))
+```
+:::
+
+We'll only keep the rows where there's X-coordinate and Y-coordinate value.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+dengue_daily <- dengue_daily %>% filter(X_coord != 0, Y_coord != 0)
+```
+
+## 3.3 Deriving Epiweek
+
+[`epiweek()`](https://lubridate.tidyverse.org/reference/week.html) is the US CDC version of epidemiological week. It follows same rules as `isoweek()` but starts on Sunday. We create a new variable `Onset_Epiweek` to log the epidemiological weeks.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+dengue_daily <- dengue_daily %>% mutate(Onset_Epiweek = epiweek(Onset_Date))
+```
+
+## 3.4 Exporting CSV file
+
+```{r}
+#| code-fold: true
+#| code-summary: "Allow exporting of dengue_daily CSV file"
+write.csv(dengue_daily, "data/dengue_daily_en.csv", row.names = FALSE)
+```
+
+# 4. Exploratory Data Analysis (EDA)
+
+## 4.1 Distribution of Dengue Cases by Age Groups
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show Code"
+#| fig-width: 8
+dengue_daily_aggregated <- dengue_daily %>%
+  group_by(Age_Group, Residential_County_City, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+cases_by_age <- dengue_daily_aggregated %>%
+  plot_ly(x = ~Age_Group, 
+          y = ~Count, 
+          color = ~Residential_County_City,
+          text = ~Residential_County_City, 
+          hoverinfo = "text",
+          type = 'scatter',
+          mode = 'markers',
+          frame = ~Onset_Year) %>%
+  layout(
+    title = "Dengue Cases by Age Group",
+    xaxis = list(title = "Age Group"),
+    yaxis = list(title = "Count of Cases"),
+    showlegend = FALSE
+  )
+
+cases_by_age
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Distribution of Dengue Cases by Age Groups"
+ggplot(data = dengue_daily, aes(x = Age_Group)) +
+    geom_bar(color = "black", fill = "grey") +  
+    ggtitle("Distribution of Age Groups") +
+    xlab("Age Group") +
+    ylab("Count") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    geom_hline(yintercept = mean(table(dengue_daily$Age_Group)), 
+               linetype = "dashed", color = "red", size = 1)
+```
+
+We observe that the number of cases is relatively lower among individuals aged 0 to 19. In contrast, cases are above average for those aged 50 and above, with a noticeable spike among residents over 70 years old.
+
+## 4.2 Dengue Cases Over Time by County City
+
+Let's visualise the number of dengue cases over time by county city.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Dengue Cases Over Time by County City"
+#| fig-height: 10
+#| fig-width: 8
+dengue_aggregated <- dengue_daily %>%
+  group_by(Age_Group, Residential_County_City, Onset_Year) %>%
+  summarize(Count = n(), .groups = "drop")
+
+dengue_aggregated$Onset_Year <- as.factor(dengue_aggregated$Onset_Year)
+
+ggplot(dengue_aggregated, aes(x = Onset_Year, y = Count, fill = Age_Group)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ Residential_County_City, scales = "free_y") +
+  theme_minimal() +
+  labs(
+    title = "Dengue Cases Over Time by County City",
+    x = "Year",
+    y = "Case Count",
+    fill = "Age Group"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+We noticed significant number of cases in Kaohsiung City and Tainan City, with significant spikes in cases in 2014, 2015 and 2023.
+
+## 4.3 Dengue Cases by Epidemiological week
+
+Let's visualise the dengue cases by epidemiological week.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Dengue Cases by Epidemiological week (Line Chart)"
+cases_by_epiweek <- dengue_daily %>%
+  group_by(Onset_Epiweek, Onset_Year) %>%
+  summarise(Count = n(), .groups = "drop")
+
+mean_cases <- mean(cases_by_epiweek$Count, na.rm = TRUE)
+
+ggplotly(ggplot(cases_by_epiweek, 
+                aes(x = Onset_Epiweek, y = Count, 
+                    color = Onset_Year, group = Onset_Year)) +
+             geom_line(size = 0.5) +  
+             geom_hline(yintercept = mean_cases, 
+                        linetype = "dashed", color = "red", size = 0.2)+
+             annotate("text", x = 10, y = mean_cases + 60, 
+                      label = paste("Mean:", round(mean_cases,1)), 
+                      color = "black") +
+             labs(
+                 title = "Dengue Cases by Epidemiological Week Over the Years",
+                 x = "Epidemiological Week",
+                 y = "Number of Cases",
+                 color = "Year"
+                 )
+         )
+```
+
+We observed an increase in cases starting around epidemiological week 32, with a decline from week 51 onwards. This trend was particularly noticeable in the years 2014, 2015, and 2023.
+
+The spike in 2023 aligns with the post-COVID-19 period when international travel resumed, leading to an influx of tourists visiting Taiwan, which may have contributed to the rise in cases.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Dengue Cases by Epidemiological week (Heatmap)"
+ggplotly(ggplot(cases_by_epiweek, 
+                aes(x = Onset_Epiweek, y = factor(Onset_Year), fill = Count)) +
+             geom_tile() + 
+             scale_fill_gradient(low = "white", high = "red") + 
+             labs(title = "Dengue Cases by Epiweek",
+                  x = "Epidemiological Week", y = "Year", fill = "Case Count") +
+             theme_minimal())
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Dengue Cases by Age Group and Epidemiological Week"
+#| fig-height: 10
+#| fig-width: 12
+ggplot(dengue_daily) +
+    geom_mosaic(aes(x = product(Onset_Epiweek), fill = Age_Group)) +
+    facet_wrap(~Residential_County_City) +
+    labs(title = "Dengue Cases by Age Group and Epidemiological Week") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 4.4 Imported vs Local Cases
+
+Let's visualise the trend for imported vs local cases.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Imported vs Local Cases by Epidemiological week"
+cases_by_imported_cases <- dengue_daily %>%
+  group_by(Onset_Epiweek, Imported_Case) %>%
+  summarize(Count = n(), .groups = "drop")
+
+ggplotly(ggplot(cases_by_imported_cases, 
+                aes(x = Onset_Epiweek, y = Count, color = Imported_Case, 
+                    group = Imported_Case)) +
+             geom_line() + 
+             geom_point() +   
+             labs(title = "Dengue Cases by Epidemiological Week (Imported vs Local)", 
+                  x = "Epidemiological Week", y = "Number of Cases",
+                  color = "Imported Case")
+)
+```
+
+We noticed that the local cases are significantly higher than imported cases from epidemiological week 25 to 51 and epidemiological week 1 to 3.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Dengue Cases by Year (Imported vs Local)"
+#| fig-height: 10
+#| fig-width: 8
+cases_by_year_facets <- dengue_daily %>%
+  group_by(Onset_Year, Imported_Case, Residential_County_City) %>%
+  summarize(Count = n(), .groups = "drop")
+
+cases_by_year_facets$Onset_Year <- as.factor(cases_by_year_facets$Onset_Year)
+
+ggplot(cases_by_year_facets, aes(x = Onset_Year, y = Count, color = Imported_Case, group = Imported_Case)) +
+  geom_line() + 
+  geom_point() +   
+  labs(title = "Dengue Cases by Year (Imported vs Local)", 
+       x = "Year", 
+       y = "Number of Cases",
+       color = "Imported Case") +
+  facet_wrap(~ Residential_County_City, scales = "free_y") + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# 5. Confirmatory Data Analysis (CDA)
+
+## 5.1 Does certain age group have significantly higher dengue cases compared to others?
+
+First, let's visualise the distribution of mean dengue cases by age groups.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+
+mean_age_group_year <- dengue_daily %>%
+    group_by(Age_Group, Onset_Year) %>%
+    summarize(Mean = mean(n()), .groups = "drop")
+
+ggplot(mean_age_group_year, aes(x = Age_Group, y = Mean, fill = Age_Group)) +
+    geom_boxplot() +
+    labs(title = "Distribution of Dengue Cases Across Age Groups",
+         x = "Age Group",
+         y = "Mean Dengue Cases per Year")
+```
+
+### 5.1.1 Check if dengue cases are evenly distributed across age groups
+
+We perform chi-square test using the sum of dengue cases by age group.
+
+-   H~0~: The number of dengue cases is independent of age group
+
+-   H~1~: The number of dengue cases depends on age group
+
+::: panel-tabset
+#### Chi-Square test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+sum_age_group <- dengue_daily %>%
+    group_by(Age_Group) %>%
+    summarize(Count = n(), .groups = "drop")
+
+chisq.test(sum_age_group$Count)
+```
+
+#### Visual
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = sum_age_group,
+    x = Age_Group, 
+    y = Count,
+    type = "np",
+    mean.ci = TRUE, 
+    p.adjust.method = "fdr",
+    messages = FALSE
+    )
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
+
+-   This suggests that the number of dengue cases varies significantly across different age groups.
+
+### 5.1.2 Check if dengue cases are evenly distributed across age groups over the years
+
+We perform chi-square test using the sum of dengue cases by age group.
+
+-   H~0~: The distribution of dengue cases across age group does not change over the years
+
+-   H~1~: The distribution of dengue cases across age group changes over the years
+
+::: panel-tabset
+#### Chi-square test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+sum_age_group_year <- dengue_daily %>%
+    group_by(Age_Group, Onset_Year) %>%
+    summarize(Count = n(), .groups = "drop")
+
+sum_age_group_year_table <- table(sum_age_group_year$Age_Group, 
+                                  sum_age_group_year$Onset_Year)
+
+chisq.test(sum_age_group_year_table)
+```
+
+#### Visual
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = sum_age_group_year,
+    x = Age_Group, 
+    y = Count,
+    type = "p",
+    mean.ci = TRUE, 
+    pairwise.comparisons = TRUE, 
+    pairwise.display = "s",
+    p.adjust.method = "fdr",
+    messages = FALSE
+    )
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \> 0.05, we do not reject the null hypothesis at 5% significance level.
+
+-   This suggests that the number of dengue cases does not change across different age groups over the years.
+
+### 5.1.3 Check if the average number of dengue cases differs by age group
+
+We perform Kruskal-Wallis test using the mean of dengue cases by age group.
+
+-   H~0~: The mean number of dengue cases per year is the same across all age groups
+
+-   H~1~: The mean number of dengue cases per year is the differs across all age groups
+
+::: panel-tabset
+#### Kruskal-Wallis test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+
+kruskal.test(Count ~ Age_Group, data = group_by_age)
+```
+
+#### Visual
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = group_by_age,
+    x = Age_Group, 
+    y = Count,
+    type = "p",
+    mean.ci = TRUE, 
+    pairwise.comparisons = TRUE, 
+    pairwise.display = "s",
+    p.adjust.method = "fdr",
+    messages = FALSE
+    )
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
+
+-   This suggests that the mean number of dengue cases differs across different age groups.
+
+## 5.2 How do other factors such as gender, imported cases, serotype and geographic distribution influence the number of dengue cases?
+
+### 5.2.1 Gender
+
+-   H~0~: There is no difference in the number of dengue cases between male and female
+
+-   H~1~: There is a difference in the number of dengue cases between male and female
+
+::: panel-tabset
+#### T-test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+group_by_gender_test <- group_by_gender %>%
+    filter(Gender %in% c("F", "M"))
+
+t_test_gender <- t.test(Count ~ Gender, data = group_by_gender_test)
+
+t_test_gender
+```
+
+#### Two-sample mean test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = group_by_gender_test,
+    x = Gender, 
+    y = Count,
+    type = "np",
+    messages = FALSE
+    )
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \> 0.05, we do not reject the null hypothesis at 5% significance level.
+
+-   This suggests that there is no difference in the number of dengue cases between male and female.
+
+### 5.2.2 Imported Cases
+
+-   H~0~: There is no difference in the number of dengue cases between imported and local cases
+
+-   H~1~: There is a difference in the number of dengue cases between imported and local cases
+
+::: panel-tabset
+#### T-test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+t_test_gender <- t.test(Count ~ Imported_Case, data = group_by_imported)
+
+t_test_gender
+```
+
+#### Two-sample mean test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = group_by_imported,
+    x = Imported_Case, 
+    y = Count,
+    type = "np",
+    messages = FALSE
+    )
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \< 0.10, we reject the null hypothesis at 10% significance level.
+
+-   This suggests that there is significant difference in the number of dengue cases between imported and local cases.
+
+### 5.2.3 Serotype
+
+-   H~0~: There is no difference in the number of dengue cases between different serotypes
+
+-   H~1~: There is a difference in the number of dengue cases between different serotypes
+
+::: panel-tabset
+#### One-way ANOVA test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+
+# Excluding data with missing Serotype
+group_by_serotype_test <- group_by_serotype %>% filter(!is.na(Serotype))
+
+anova_serotype <- aov(Count ~ Serotype, data = group_by_serotype_test)
+
+summary(anova_serotype)
+```
+
+#### Visual
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = group_by_serotype_test,
+    x = Serotype, 
+    y = Count,
+    type = "p",
+    mean.ci = TRUE, 
+    pairwise.comparisons = TRUE, 
+    pairwise.display = "s",
+    p.adjust.method = "fdr",
+    messages = FALSE
+)
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \> 0.05, we do not reject the null hypothesis at 5% significance level.
+
+-   This suggests that there is no difference in the number of dengue cases between different serotypes.
+
+### 5.2.4 Geographic Distribution
+
+-   H~0~: There is no difference in the number of dengue cases between county cities
+
+-   H~1~: There is a difference in the number of dengue cases between county cities
+
+::: panel-tabset
+#### One-way ANOVA test
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+
+kruskal.test(Count ~ Residential_County_City, data = group_by_county)
+```
+
+#### Visual
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show code"
+ggbetweenstats(
+    data = group_by_county,
+    x = Residential_County_City, 
+    y = Count,
+    type = "p",
+    mean.ci = TRUE, 
+    pairwise.comparisons = TRUE, 
+    pairwise.display = "s",
+    p.adjust.method = "fdr",
+    messages = FALSE
+)
+```
+:::
+
+Conclusion:
+
+-   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
+
+-   This suggests that there is significant difference in the number of dengue cases between county cities.
+
+# 6. UI Design
+
+![](/UI%20Design/Slide2.JPG)
+
+![](/UI%20Design/Slide3.JPG)

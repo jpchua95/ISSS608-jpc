@@ -75,14 +75,20 @@ website:
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex08_17420191461700/SGPoolsMap
         - text: "In-Class Exercise 8b (SG Property Transactions)"
           href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex08SGPropertyTransactions/SGRealEstateTransactions
+        - text: "In-Class Exercise 10 (Coffee Chain Sales Report)"
+          href: https://public.tableau.com/app/profile/jia.peng.chua/viz/In-class_Ex10_17432393303910/SalesReport
       - text: "Take-Home Exercise"
         menu:
         - text: "Take-Home Exercise 1 (Heart Attack in Japan - Youth vs Adult)"
           href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
         - text: "Take-Home Exercise 2 (Singapore's International Trade)"
           href: Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html
-        - text: "Take-Home Exercise 3 (Dengue Cases in Taiwan)"
-          href: Take-home_Ex/Take-home_Ex03/Take-home_Ex0.html
+        - text: "Take-Home Exercise 3a (Dengue Cases in Taiwan - EDA, CDA)"
+          href: Take-home_Ex/Take-home_Ex03/Take-home_Ex03a.html
+        - text: "Take-Home Exercise 3b (Dengue Cases in Taiwan - Geospatial EDA)"
+          href: Take-home_Ex/Take-home_Ex03/Take-home_Ex03b.html
+        - text: "Take-Home Exercise 3c (Dengue Cases in Taiwan - Shiny Prototype)"
+          href: https://jpchua.shinyapps.io/Take_Home_Ex03_Shiny_Prototype/
 
 format:
   html:
