@@ -85,7 +85,7 @@ Displaying the basic map of Taiwan, with red bubbles indicating the overall deng
 #| code-fold: true
 #| code-summary: "Show code"
 
-tmap_mode("view")
+tmap_mode("plot")
 tm_shape(dengue_daily_sf) + 
     tm_bubbles(fill = "red",
                size = 1,
