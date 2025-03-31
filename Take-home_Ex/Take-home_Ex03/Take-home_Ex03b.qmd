@@ -44,6 +44,11 @@ To get started, let's import the latest dengue dataset.
 dengue_daily <- read_csv("data/dengue_daily_en.csv")
 ```
 
+```{r}
+dengue_daily <- dengue_daily %>%
+    filter(Onset_Year > 2020)
+```
+
 Next, we load and view the Taiwan map.
 
 ```{r}
@@ -85,7 +90,7 @@ Displaying the basic map of Taiwan, with red bubbles indicating the overall deng
 #| code-fold: true
 #| code-summary: "Show code"
 
-tmap_mode("plot")
+tmap_mode("view")
 tm_shape(dengue_daily_sf) + 
     tm_bubbles(fill = "red",
                size = 1,
@@ -134,82 +139,60 @@ We aggregate the dataset by year, taking on the key columns that we need in our 
 The following section shows the aggregated data of selected years.
 
 ::: panel-tabset
-#### 2000
+#### 2021
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show code"
-dengue_aggregated_2000 <- dengue_daily_sf %>%
-    filter(Onset_Year == 2000) %>%
-    group_by(Onset_Year, Onset_Epiweek, Age_Group, Gender, 
-             Residential_County_City, Imported_Case, Serotype, 
-             MOI_Residential_County_Code, geometry) %>%
+dengue_aggregated_2021 <- dengue_daily_sf %>%
+    filter(Onset_Year == 2021) %>%
+    group_by(Onset_Year, Residential_County_City, geometry) %>%
     summarize(Count = n(), .groups = "drop")
 
-tm_shape(dengue_aggregated_2000) + 
+tm_shape(dengue_aggregated_2021) + 
     tm_bubbles(fill = "Residential_County_City",
-               size = "Count",
+               size = 1,
                col = "black",
                lwd = 1)
 ```
 
-#### 2001
+#### 2022
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show code"
-dengue_aggregated_2001 <- dengue_daily_sf %>%
-    filter(Onset_Year == 2001) %>%
-    group_by(Onset_Year, Onset_Epiweek, Age_Group, Gender, 
-             Residential_County_City, Imported_Case, Serotype, 
-             MOI_Residential_County_Code, geometry) %>%
+dengue_aggregated_2022 <- dengue_daily_sf %>%
+    filter(Onset_Year == 2022) %>%
+    group_by(Onset_Year, Residential_County_City, geometry) %>%
     summarize(Count = n(), .groups = "drop")
 
-tm_shape(dengue_aggregated_2001) + 
+tm_shape(dengue_aggregated_2022) + 
     tm_bubbles(fill = "Residential_County_City",
-               size = "Count",
+               size = 1,
                col = "black",
                lwd = 1)
 ```
 
-#### 2014
+#### 2023
 
 ```{r}
 #| code-fold: true
 #| code-summary: "Show code"
-dengue_aggregated_2014 <- dengue_daily_sf %>%
-    filter(Onset_Year == 2014) %>%
-    group_by(Onset_Year, Onset_Epiweek, Age_Group, Gender, 
-             Residential_County_City, Imported_Case, Serotype, 
-             MOI_Residential_County_Code, geometry) %>%
+dengue_aggregated_2023 <- dengue_daily_sf %>%
+    filter(Onset_Year == 2023) %>%
+    group_by(Onset_Year,  
+             Residential_County_City, geometry) %>%
     summarize(Count = n(), .groups = "drop")
 
-tm_shape(dengue_aggregated_2014) + 
-    tm_bubbles(fill = "Residential_County_City",
-               size = "Count",
-               col = "black",
-               lwd = 1)
-```
-
-#### 2015
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show code"
-dengue_aggregated_2015 <- dengue_daily_sf %>%
-    filter(Onset_Year == 2015) %>%
-    group_by(Onset_Year, Onset_Epiweek, Age_Group, Gender, 
-             Residential_County_City, Imported_Case, Serotype, 
-             MOI_Residential_County_Code, geometry) %>%
-    summarize(Count = n(), .groups = "drop")
-
-tm_shape(dengue_aggregated_2015) + 
+tm_shape(dengue_aggregated_2023) + 
     tm_bubbles(fill = "Residential_County_City",
                size = "Count",
                col = "black",
                lwd = 1)
 ```
 :::
+
+The final Shiny app will allow users to toggle the Onset_Year.
 
 ## 4.2 Dengue Cases by Various Factors
 
@@ -297,6 +280,8 @@ tm_shape(dengue_aggregated_county) +
                lwd = 1)
 ```
 :::
+
+The final Shiny app will allow users to toggle the variables.
 
 # 5. UI Design
 
