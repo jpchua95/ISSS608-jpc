@@ -945,7 +945,17 @@ Conclusion:
 
 -   This suggests that there is significant difference in the number of dengue cases between county cities.
 
-# 6. UI Design
+# 6. CDA Summary
+
+\| CDA \| Findings \|
+\|--------\|--------\|
+\| Age Group \| 2.05 \|
+\| Gender \| 1.37 \|
+\| Imported Cases \| 3.09 \|\
+\| Serotype \| 3.09 \|\
+\| County Cities \| 3.09 \|
+
+# 7. UI Design
 
 ![](/UI%20Design/Slide2.JPG)
 
