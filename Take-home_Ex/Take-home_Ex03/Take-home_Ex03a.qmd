@@ -734,49 +734,6 @@ Conclusion:
 
 -   This suggests that the number of dengue cases does not change across different age groups over the years.
 
-### 5.1.3 Check if the average number of dengue cases differs by age group
-
-We perform Kruskal-Wallis test using the mean of dengue cases by age group.
-
--   H~0~: The mean number of dengue cases per year is the same across all age groups
-
--   H~1~: The mean number of dengue cases per year is the differs across all age groups
-
-::: panel-tabset
-#### Kruskal-Wallis test
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show code"
-
-kruskal.test(Count ~ Age_Group, data = group_by_age)
-```
-
-#### Visual
-
-```{r}
-#| code-fold: true
-#| code-summary: "Show code"
-ggbetweenstats(
-    data = group_by_age,
-    x = Age_Group, 
-    y = Count,
-    type = "p",
-    mean.ci = TRUE, 
-    pairwise.comparisons = TRUE, 
-    pairwise.display = "s",
-    p.adjust.method = "fdr",
-    messages = FALSE
-    )
-```
-:::
-
-Conclusion:
-
--   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
-
--   This suggests that the mean number of dengue cases differs across different age groups.
-
 ## 5.2 How do other factors such as gender, imported cases, serotype and geographic distribution influence the number of dengue cases?
 
 ### 5.2.1 Gender
@@ -854,9 +811,9 @@ ggbetweenstats(
 
 Conclusion:
 
--   Since p-value is \< 0.10, we reject the null hypothesis at 10% significance level.
+-   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
 
--   This suggests that there is significant difference in the number of dengue cases between imported and local cases.
+-   This suggests that there is a difference in the number of dengue cases between imported and local cases.
 
 ### 5.2.3 Serotype
 
@@ -865,7 +822,7 @@ Conclusion:
 -   H~1~: There is a difference in the number of dengue cases between different serotypes
 
 ::: panel-tabset
-#### One-way ANOVA test
+#### Kruskal-Wallis test
 
 ```{r}
 #| code-fold: true
@@ -874,9 +831,7 @@ Conclusion:
 # Excluding data with missing Serotype
 group_by_serotype_test <- group_by_serotype %>% filter(!is.na(Serotype))
 
-anova_serotype <- aov(Count ~ Serotype, data = group_by_serotype_test)
-
-summary(anova_serotype)
+kruskal.test(Count ~ Serotype, data = group_by_serotype_test)
 ```
 
 #### Visual
@@ -900,9 +855,9 @@ ggbetweenstats(
 
 Conclusion:
 
--   Since p-value is \> 0.05, we do not reject the null hypothesis at 5% significance level.
+-   Since p-value is \< 0.05, we reject the null hypothesis at 5% significance level.
 
--   This suggests that there is no difference in the number of dengue cases between different serotypes.
+-   This suggests that there is a difference in the number of dengue cases between different serotypes.
 
 ### 5.2.4 Geographic Distribution
 
@@ -911,7 +866,7 @@ Conclusion:
 -   H~1~: There is a difference in the number of dengue cases between county cities
 
 ::: panel-tabset
-#### One-way ANOVA test
+#### Kruskal Wallis test
 
 ```{r}
 #| code-fold: true
@@ -947,13 +902,33 @@ Conclusion:
 
 # 6. CDA Summary
 
-\| CDA \| Findings \|
-\|--------\|--------\|
-\| Age Group \| 2.05 \|
-\| Gender \| 1.37 \|
-\| Imported Cases \| 3.09 \|\
-\| Serotype \| 3.09 \|\
-\| County Cities \| 3.09 \|
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| CDA                  | Key Findings                                                                                                                                                                                                                |
++======================+=============================================================================================================================================================================================================================+
+| Age Group            | -   Visually, the number of dengue cases varies significantly across different age groups. However, over the years, the number of dengue cases were generally stable except for the few years with spikes in dengue cases.  |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   From the statistical test, we conclude that the number of dengue cases varies significantly across different age groups.                                                                                                |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   When we aggregate the data by year, the number of dengue cases does not change significantly across different age groups over the years.                                                                                |
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Gender               | -   Visually, the distribution of dengue cases between male and female seems indifferent.                                                                                                                                   |
+|                      |                                                                                                                                                                                                                             |
+|                      | <!-- -->                                                                                                                                                                                                                    |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   From the t-test, there is no difference in the number of dengue cases between male and female.                                                                                                                          |
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Imported Cases       | -   From the box plot, there are significantly more local cases than imported cases.                                                                                                                                        |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   This is supported by t-test, where there is a difference in the number of dengue cases between imported and local cases.                                                                                                |
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Serotype             | -   Visually, there is some difference between the means of the number of dengue cases across different serotypes.                                                                                                          |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   This is supported by the Kruskal-Wallis test, where there is a difference in the number of dengue cases between different serotypes.                                                                                    |
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| County Cities        | -   Visually, there is a significant difference in the number of dengue cases between county cities.                                                                                                                        |
+|                      |                                                                                                                                                                                                                             |
+|                      | -   This is supported by the Kruskal-Wallis test, where there is a difference in the number of dengue cases between different county cities.                                                                                |
++----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 # 7. UI Design
 
